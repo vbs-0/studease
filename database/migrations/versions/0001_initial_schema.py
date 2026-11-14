@@ -24,7 +24,7 @@ def upgrade() -> None:
     sa.Column('to_status', sa.String(length=20), nullable=False),
     sa.Column('occurred_on', sa.Date(), nullable=False),
     sa.Column('actor', sa.String(length=40), nullable=False),
-    sa.CheckConstraint("entity_type IN ('enrollment', 'invoice', 'eligibility', 'scholarship', 'payment', 'refund', 'exception')", name=op.f('ck_event_entity_type_allowed')),
+    sa.CheckConstraint("entity_type IN ('enrollment', 'invoice', 'eligibility', 'scholarship', 'payment', 'refund', 'student_balance', 'exception')", name=op.f('ck_event_entity_type_allowed')),
     sa.PrimaryKeyConstraint('event_id', name=op.f('pk_event')),
     comment='Event: append-only state history. Current status columns are replayable from these rows.'
     )
@@ -38,7 +38,7 @@ def upgrade() -> None:
     sa.Column('expected_decision', sa.String(length=24), nullable=False),
     sa.Column('expected_value_paise', sa.BigInteger(), nullable=True),
     sa.Column('details', sa.String(length=300), nullable=False),
-    sa.CheckConstraint("entity_type IN ('enrollment', 'invoice', 'eligibility', 'scholarship', 'payment', 'refund', 'exception')", name=op.f('ck_ground_truth_entity_type_allowed')),
+    sa.CheckConstraint("entity_type IN ('enrollment', 'invoice', 'eligibility', 'scholarship', 'payment', 'refund', 'student_balance', 'exception')", name=op.f('ck_ground_truth_entity_type_allowed')),
     sa.CheckConstraint("expected_decision IN ('REVERSE_ALLOCATION', 'CAP_SCHOLARSHIP', 'VOID_DUPLICATE', 'BLOCK_REFUND', 'RECOMPUTE_BALANCE')", name=op.f('ck_ground_truth_expected_decision_allowed')),
     sa.CheckConstraint("issue_type IN ('ALLOC_EXCEEDS_PAYMENT', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'DUPLICATE_INVOICE', 'REFUND_EXCEEDS_NET_PAID', 'BALANCE_LEDGER_MISMATCH')", name=op.f('ck_ground_truth_issue_type_allowed')),
     sa.PrimaryKeyConstraint('gt_id', name=op.f('pk_ground_truth')),
@@ -245,7 +245,7 @@ def upgrade() -> None:
     sa.Column('resolved_by', sa.String(length=32), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('resolved_at', sa.DateTime(timezone=True), nullable=True),
-    sa.CheckConstraint("entity_type IN ('enrollment', 'invoice', 'eligibility', 'scholarship', 'payment', 'refund', 'exception')", name=op.f('ck_exception_entity_type_allowed')),
+    sa.CheckConstraint("entity_type IN ('enrollment', 'invoice', 'eligibility', 'scholarship', 'payment', 'refund', 'student_balance', 'exception')", name=op.f('ck_exception_entity_type_allowed')),
     sa.CheckConstraint("exception_type IN ('ALLOC_EXCEEDS_PAYMENT', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'DUPLICATE_INVOICE', 'REFUND_EXCEEDS_NET_PAID', 'BALANCE_LEDGER_MISMATCH')", name=op.f('ck_exception_exception_type_allowed')),
     sa.CheckConstraint("recommended_decision IN ('REVERSE_ALLOCATION', 'CAP_SCHOLARSHIP', 'VOID_DUPLICATE', 'BLOCK_REFUND', 'RECOMPUTE_BALANCE')", name=op.f('ck_exception_recommended_decision_allowed')),
     sa.CheckConstraint("status IN ('OPEN', 'RESOLVED', 'DISMISSED')", name=op.f('ck_exception_status_allowed')),

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 YEAR = 2026
-AS_OF = date(2026, 10, 22)      # the date every derived status and balance is stated as of
+AS_OF = date(2026, 9, 5)        # the date every derived status and balance is stated as of (4 days before FALL is due)
 GRACE_DAYS = 7                  # R-LATE-1
 PAYMENT_TERM_DAYS = 30          # due date = issue date + 30 days
 

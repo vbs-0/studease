@@ -4,7 +4,7 @@ StudEase calculates tuition and fees, applies scholarship eligibility and paymen
 balances. This document is the specification: every rule the code enforces is stated here once, with the
 number that the code uses. If code and this document disagree, that is a bug.
 
-Date fixed for the dataset ("as of"): **2026-10-22**. Seed: **20261022**. Currency: **INR, stored as integer
+Date fixed for the dataset ("as of"): **2026-09-05**. Seed: **20261022**. Currency: **INR, stored as integer
 paise** (`*_paise` columns, 1 INR = 100 paise). No floats anywhere in money paths.
 
 ## 1. Three tiers
@@ -276,7 +276,7 @@ Every money movement posts one `ledger_entry` (append-only):
 - R-LED-1: student balance = sum of the student's ledger entries. Positive means the student owes money;
   negative means the institution holds credit.
 - R-LED-2: `student_balance` stores the stated figures (charged, credits, paid, refunded, balance) as of
-  2026-10-22, derived from the same source rows. It must equal the ledger.
+  2026-09-05, derived from the same source rows. It must equal the ledger.
 - R-LED-3: balance also equals (sum of invoice totals) - (payments) + (refunds). Three independent
   routes to the same number; validation checks all three agree.
 

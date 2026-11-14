@@ -69,16 +69,19 @@ def invoice_total(lines: list[dict]) -> int:
 def outstanding_by_line(lines: list[dict], allocations: list[dict]) -> dict[str, int]:
     """R-BILL-4: for every charge line, net of credits minus what payments allocated to it.
 
-    A negative value means more was allocated than is now owed (the line was reduced after payment)."""
+    A negative value means more was allocated than is now owed (the line was reduced after payment).
+    One pass over each list, so the cost is linear in the number of lines and allocations."""
+    credit: dict[str, int] = {}
+    for ln in lines:
+        target = ln["applies_to_line_id"]
+        if target is not None:
+            credit[target] = credit.get(target, 0) + ln["amount_paise"]
     allocated: dict[str, int] = {}
     for a in allocations:
         allocated[a["invoice_line_id"]] = allocated.get(a["invoice_line_id"], 0) + a["amount_paise"]
-    out = {}
-    for ln in lines:
-        if ln["line_type"] in CHARGE_TYPES:
-            out[ln["invoice_line_id"]] = (line_net(ln["invoice_line_id"], lines)
-                                          - allocated.get(ln["invoice_line_id"], 0))
-    return out
+    return {ln["invoice_line_id"]: ln["amount_paise"] + credit.get(ln["invoice_line_id"], 0)
+            - allocated.get(ln["invoice_line_id"], 0)
+            for ln in lines if ln["line_type"] in CHARGE_TYPES}
 
 
 def eligible_fees(lines: list[dict], fee_by_id: dict[str, dict]) -> int:

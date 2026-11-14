@@ -22,7 +22,8 @@ PAYMENT_STATUSES = ["RECEIVED", "PARTIALLY_ALLOCATED", "ALLOCATED"]
 REFUND_REASONS = ["WITHDRAWAL", "CANCELLATION", "OVERPAYMENT"]
 REFUND_STATUSES = ["APPROVED", "PAID"]
 LEDGER_TYPES = ["CHARGE", "LATE_FEE", "WAIVER", "SCHOLARSHIP", "ADJUSTMENT", "PAYMENT", "REFUND"]
-ENTITY_TYPES = ["enrollment", "invoice", "eligibility", "scholarship", "payment", "refund", "exception"]
+ENTITY_TYPES = ["enrollment", "invoice", "eligibility", "scholarship", "payment", "refund", "student_balance",
+                 "exception"]
 ISSUE_TYPES = ["ALLOC_EXCEEDS_PAYMENT", "SCHOLARSHIP_EXCEEDS_ELIGIBLE", "DUPLICATE_INVOICE",
                "REFUND_EXCEEDS_NET_PAID", "BALANCE_LEDGER_MISMATCH"]
 DECISIONS_EXPECTED = ["REVERSE_ALLOCATION", "CAP_SCHOLARSHIP", "VOID_DUPLICATE", "BLOCK_REFUND",
