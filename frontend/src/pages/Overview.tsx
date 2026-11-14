@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Donut, ErrorBox, ExportMenu, Header, Metric, PageLoading, PillBar, TrendBars } from "../components/ui";
 import { get } from "../lib/api";
+import { useAuth } from "../lib/auth";
 import { LineChart } from "../components/charts";
 import { downloadCsv, downloadJson } from "../lib/export";
 import { inr, label } from "../lib/format";
@@ -8,6 +9,7 @@ import { usePage } from "../lib/page";
 
 export default function Overview() {
   usePage("Overview", "Headline tuition, collection and balance figures by term and program, with the open exceptions queue.");
+  const { me } = useAuth();
   const q = useQuery({ queryKey: ["overview"], queryFn: () => get("/metrics/overview") });
   if (q.isPending) return <PageLoading labels={["Net billed", "Collected", "Owed by students", "Open exceptions"]} />;
   if (q.isError) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
@@ -28,7 +30,7 @@ export default function Overview() {
         <Metric kind="hero" title="Net billed" value={inr(billed)} note={`${inr(d.charged_paise)} charged, ${inr(-d.credits_paise)} credits`} />
         <Metric kind="sand" title="Collected" value={inr(d.paid_paise - d.refunded_paise)} note={`${collection}% of net billed, after ${inr(d.refunded_paise)} refunds`} />
         <Metric kind="ink" title="Owed by students" value={inr(d.owed_paise)} note={`${inr(d.credit_held_paise)} held as credit`} />
-        <Metric kind="mint" title="Open exceptions" value={d.open_exceptions} note="Awaiting review" to="/exceptions" />
+        <Metric kind="mint" title="Open exceptions" value={d.open_exceptions} note={me?.role === "ACADEMIC_ADMIN" ? "Awaiting support review" : "Awaiting review"} to={me?.role === "ACADEMIC_ADMIN" ? undefined : "/exceptions"} />
       </div>
       <section className="panel mt-6"><h2>Charged and collected by month</h2>
         <LineChart name="Monthly billing and collection" labels={d.by_month.map((m: any) => m.month)} format={(n) => `${(n / 1e7).toFixed(1)} Cr`}
