@@ -145,6 +145,78 @@ an input table; a test fails if a leak word appears in any input table.
   one-command rollback; CI runs lint, tests, the docs-freshness check, the reproducibility check and the hygiene scan.
   How it is deployed, step by step: [docs/deploy.md](docs/deploy.md).
 
+## Code architecture
+
+Three tiers in three folders. The business rules live in a pure `domain/` package that knows nothing about HTTP or SQL; everything else depends on it, never the other way round.
+
+```mermaid
+flowchart LR
+  subgraph Browser
+    UI["frontend/<br/>React 19, Vite, TanStack Query<br/>pages by role, charts, exports"]
+  end
+  subgraph Server["Server (nginx + systemd)"]
+    NGX["nginx<br/>TLS, HSTS, CSP, static files"]
+    API["backend/app<br/>FastAPI, JWT, role guards"]
+  end
+  subgraph Data["database/"]
+    PG[("PostgreSQL<br/>Alembic migrations")]
+  end
+  UI -- "HTTPS /api/v1" --> NGX --> API
+  API -- "SQLAlchemy Core, psycopg 3<br/>bound parameters only" --> PG
+```
+
+### Backend layers
+
+```mermaid
+flowchart TB
+  main["main.py<br/>middleware: request id, access log, security headers, CORS"]
+  api["api/<br/>auth, students, payments, enrollments, learner,<br/>admin, catalog, metrics, exceptions"]
+  deps["api/deps.py + errors.py<br/>current_user, require_role, scope checks,<br/>keyset Page, error envelope"]
+  txn["api/txn.py<br/>one transaction per write, row locks,<br/>id counters, idempotency keys"]
+  domain["domain/<br/>fees, billing, scholarships, allocation,<br/>late fees, withdrawal, ledger, status<br/>pure functions, integer paise"]
+  db["db.py + schema.py<br/>engine, tables, constraints"]
+  gen["datagen/ + engine/<br/>generator, validator, detectors, loader, evaluation"]
+  main --> api
+  api --> deps
+  api --> txn
+  api --> domain
+  txn --> db
+  gen --> domain
+  gen --> db
+```
+
+### One write, end to end (a learner pays)
+
+```mermaid
+sequenceDiagram
+  participant U as Browser
+  participant A as API
+  participant D as domain/allocation
+  participant P as PostgreSQL
+  U->>A: POST /me/payments + Idempotency-Key
+  A->>A: validate body, check token and role
+  A->>P: BEGIN, lock student row, replay check on key
+  A->>D: allocate(amount, open invoice lines oldest due first)
+  D-->>A: allocations and unapplied credit
+  A->>P: insert payment, allocations, ledger rows, events, update balance
+  A->>P: COMMIT
+  A-->>U: 201 payment, allocations, unapplied_paise
+  Note over P: stated balance = sum of ledger = invoices - payments + refunds
+```
+
+### Who can reach what
+
+```mermaid
+flowchart LR
+  L[Learner] --> me["/me/*<br/>own account only"]
+  I[Instructor] --> prog["students of own program<br/>no money"]
+  AA[Academic admin] --> fin["students, fee versions,<br/>scholarships, withdrawals"]
+  S[Support] --> pay["payments, add student,<br/>exception queue"]
+  PA[Platform admin] --> all["everything above<br/>+ users + data quality"]
+```
+
+The full role-by-route table is generated from the code: [docs/permissions.md](docs/permissions.md). The rules, entities and API are in [docs/architecture.md](docs/architecture.md).
+
 ## Repository map
 
 ```
