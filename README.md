@@ -150,6 +150,7 @@ an input table; a test fails if a leak word appears in any input table.
 Beyond the required features, these are implemented and tested or checkable in the repo. Each line is one thing a reviewer can ask about.
 
 **Performance and loading**
+
 1. Route-level code splitting: every page is a `React.lazy` chunk, fetched on first visit (`frontend/src/App.tsx`), with a skeleton fallback.
 2. Vendor chunks (`react`, `query`) split out so they cache across releases.
 3. Hashed assets served `Cache-Control: public, immutable`; gzip on for text, JS, JSON and SVG.
@@ -162,6 +163,7 @@ Beyond the required features, these are implemented and tested or checkable in t
 10. Charts are inline SVG, no chart library; fonts self-hosted and subset; the only image is a small async-decoded logo.
 
 **Loading and error experience**
+
 11. Skeleton cards that carry the real shapes and labels of the cards that replace them.
 12. A top progress bar while any request runs (appears after 120 ms so quick requests do not flicker).
 13. Splash screen on first load; spinner on every button that submits; toasts for results.
@@ -170,6 +172,7 @@ Beyond the required features, these are implemented and tested or checkable in t
 16. Every API error is one JSON envelope with a request id, and no stack trace ever reaches a client.
 
 **Data integrity and money**
+
 17. Integer paise and basis points everywhere; one rounding rule (half up).
 18. Append-only ledger and event history; mistakes are corrected by new rows, never edits.
 19. Three-way balance reconciliation (stated, ledger, invoices minus payments plus refunds) shown on screen with a strike through any figure that disagrees.
@@ -182,6 +185,7 @@ Beyond the required features, these are implemented and tested or checkable in t
 26. Versioned fee schedules; a new price is billed only to later enrolments.
 
 **Security**
+
 27. scrypt password hashing; pinned-algorithm JWTs; role and enabled flag re-read from the database on every request.
 28. Role guards in one place plus object-level scoping (out-of-scope ids answer 404, so ids cannot be probed).
 29. Bound SQL parameters only; a test fails if any SQL is built from strings.
@@ -192,6 +196,7 @@ Beyond the required features, these are implemented and tested or checkable in t
 34. Secret and personal-data scrub check (`scripts/scrub_check.py`) runs in tests and CI.
 
 **Accessibility and polish**
+
 35. Skip link, visible focus rings, labelled inputs, `role="status"` and `role="alert"` messages, chart text alternatives.
 36. Light and dark themes (system default, manual toggle remembered), a print stylesheet, mobile layout from 360 px.
 37. Per-page titles and meta descriptions, Open Graph tags, `robots.txt`, a web manifest, favicon and app icons.
@@ -200,6 +205,7 @@ Beyond the required features, these are implemented and tested or checkable in t
 40. Staff data entry, user administration and a visible sign-up path for every kind of account.
 
 **Observability and operations**
+
 41. Request id on every response (`X-Request-ID`) and in every log line; structured JSON access log.
 42. `/healthz` and `/readyz`; a deploy script that waits for health and fails loudly.
 43. Releases under timestamped folders with a symlink; one-command rollback.
@@ -207,6 +213,7 @@ Beyond the required features, these are implemented and tested or checkable in t
 45. Alembic migrations as the only way the schema changes.
 
 **Quality gates and documentation**
+
 46. 318 backend tests (domain, data generation, engine, API, security, edge cases) and frontend unit tests; ruff and `tsc` clean.
 47. 35 edge-case tests with a catalogue ([docs/edge-cases.md](docs/edge-cases.md)).
 48. A permission matrix generated from the route guards, and a test that fails when the committed copy is stale ([docs/permissions.md](docs/permissions.md)).

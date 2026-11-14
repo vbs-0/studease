@@ -57,7 +57,7 @@ export default function Shell() {
         <div className="vx-actions">
           <span className="vx-who" title={me.email}>{label(me.role)}</span>
           <ThemeToggle />
-          <button className="vx-pill" onClick={signOut}><LogOut size={15} aria-hidden />Sign out</button>
+          <button className="vx-pill" onClick={signOut} aria-label="Sign out"><LogOut size={15} aria-hidden /><span className="vx-so">Sign out</span></button>
         </div>
       </header>
       <main id="main" className="vx-wrap"><Suspense fallback={<PageLoading />}><Outlet /></Suspense></main>
