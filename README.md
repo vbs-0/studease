@@ -87,6 +87,18 @@ flowchart TB
 
 Also in `docs/screenshots/`: `learner-enroll.png`, `students.png`, `data-quality.png`. All are 1440 by 810 desktop captures.
 
+## Android app, on a real phone
+
+<p align="center">
+  <img src="docs/screenshots/mobile/sign-in.png" width="19%" alt="Sign in">
+  <img src="docs/screenshots/mobile/enrol.png" width="19%" alt="Enrol">
+  <img src="docs/screenshots/mobile/scholarships.png" width="19%" alt="Scholarships">
+  <img src="docs/screenshots/mobile/more.png" width="19%" alt="Account and settings">
+  <img src="docs/screenshots/mobile/overview.png" width="19%" alt="Staff overview">
+</p>
+
+Sign in, enrol, scholarships, account settings and the staff overview, captured on a physical Android phone. Download the APK from the [latest release](https://github.com/vbs-0/studease/releases/latest); details in [Android app](#android-app) below.
+
 ## Quick start
 
 **Windows, one step:** run [`run.bat`](run.bat). It checks the tools, installs, starts the database, loads the data and opens the app
@@ -309,16 +321,6 @@ Beyond the required features, these are implemented and tested or checkable in t
 ## Android app
 
 The same product as a native Android app, in [`mobile/`](mobile): Flutter 3.44, Material 3, about 2,600 lines of Dart, no code generation. It talks to the same live API as the website, so every rule (roles, idempotent payments, the append-only ledger) is enforced by the server, never by the phone.
-
-<table>
-<tr>
-<td align="center" width="20%"><img src="docs/screenshots/mobile/sign-in.png" alt="Sign in"><br><sub>Sign in, create account, demo roles</sub></td>
-<td align="center" width="20%"><img src="docs/screenshots/mobile/enrol.png" alt="Enrol"><br><sub>Enrol in an open term</sub></td>
-<td align="center" width="20%"><img src="docs/screenshots/mobile/scholarships.png" alt="Scholarships"><br><sub>Scholarships and decisions</sub></td>
-<td align="center" width="20%"><img src="docs/screenshots/mobile/more.png" alt="Account and settings"><br><sub>Account, theme, password</sub></td>
-<td align="center" width="20%"><img src="docs/screenshots/mobile/overview.png" alt="Staff overview"><br><sub>Staff overview with charts</sub></td>
-</tr>
-</table>
 
 ### What it does, by role
 
