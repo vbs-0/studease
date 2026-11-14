@@ -1,0 +1,107 @@
+@import "tailwindcss";
+@import "@fontsource-variable/hanken-grotesk";
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
+
+/* "Register paper": cool paper, 1px ruled lines, ink black, a red margin. Light by default; dark follows the OS
+   or the toggle. Every rule is 1px. Colours are tokens, never literals in components. */
+:root {
+  --paper: #f6f6f6; --sheet: #ffffff; --rule: #e3e0d8; --rule-strong: #cfcabd; --ink: #191919; --muted: #6a675f;
+  --blue: #191919; --blue-soft: #efece4; --red: #d63a12; --red-soft: #ffdede; --amber: #a85d00; --green: #1f7a45;
+  --orange: #f75708; --mint: #bee0c0; --track: #ece8dd;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --paper: #121212; --sheet: #1b1b1b; --rule: #2c2b28; --rule-strong: #403e39; --ink: #f4f1e8; --muted: #a5a196;
+  --blue: #f4f1e8; --blue-soft: #25231f; --red: #ff7a52; --red-soft: #3a1b14; --amber: #f2a33a; --green: #6fd39a;
+  --orange: #ff6a1f; --mint: #1f3a2a; --track: #2a2824;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121212; --sheet: #1b1b1b; --rule: #2c2b28; --rule-strong: #403e39; --ink: #f4f1e8; --muted: #a5a196;
+    --blue: #f4f1e8; --blue-soft: #25231f; --red: #ff7a52; --red-soft: #3a1b14; --amber: #f2a33a; --green: #6fd39a;
+    --orange: #ff6a1f; --mint: #1f3a2a; --track: #2a2824;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", "Times New Roman", serif;
+  --color-paper: var(--paper); --color-sheet: var(--sheet); --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong); --color-ink: var(--ink); --color-muted: var(--muted);
+  --color-blue: var(--blue); --color-blue-soft: var(--blue-soft); --color-red: var(--red);
+  --color-red-soft: var(--red-soft); --color-amber: var(--amber); --color-green: var(--green);
+  --color-orange: var(--orange);
+}
+
+html { background: var(--paper); }
+body { margin: 0; color: var(--ink); font-family: var(--font-sans); font-size: 15px; line-height: 1.45;
+  font-feature-settings: "tnum" 1, "lnum" 1; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--blue); color: var(--paper); }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+input, select, textarea, button { font: inherit; color: inherit; }
+a { color: var(--blue); text-underline-offset: 3px; }
+h1, .serif { font-family: var(--font-serif); font-weight: 400; }
+
+.num { font-variant-numeric: tabular-nums lining-nums; text-align: right; white-space: nowrap; }
+.struck { text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 1.5px; color: var(--muted); }
+.stamp { display: inline-block; border: 1px solid currentColor; padding: 0 5px; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase; line-height: 1.5; border-radius: 1px; white-space: nowrap; }
+.stamp-ok { color: var(--green); } .stamp-warn { color: var(--amber); } .stamp-bad { color: var(--red); } .stamp-mute { color: var(--muted); }
+
+.field { background: var(--sheet); border: 1px solid var(--rule-strong); border-radius: 2px; padding: 7px 10px;
+  min-height: 38px; width: 100%; }
+.field:hover { border-color: var(--blue); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; padding: 0 14px;
+  border-radius: 2px; border: 1px solid var(--blue); color: var(--blue); background: transparent; font-weight: 600;
+  cursor: pointer; transition: background-color .12s ease-out; white-space: nowrap; text-decoration: none; }
+.btn:hover:not(:disabled) { background: var(--blue-soft); }
+.btn-solid { background: var(--blue); color: var(--paper); }
+.btn-solid:hover:not(:disabled) { background: var(--blue); filter: brightness(1.15); }
+.btn-danger { border-color: var(--red); color: var(--red); }
+.btn-danger:hover:not(:disabled) { background: var(--red-soft); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+table.register { width: 100%; border-collapse: collapse; }
+table.register th { text-align: left; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--rule-strong); white-space: nowrap; }
+table.register th.num { text-align: right; }
+table.register td { padding: 9px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table.register tbody tr:hover { background: var(--blue-soft); }
+table.register tr.clickable { cursor: pointer; }
+.scroll-x { overflow-x: auto; }
+
+.panel { background: var(--sheet); border: 1px solid var(--rule-strong); border-radius: 2px; padding: 16px 18px; }
+.margin-rule { border-left: 1px solid var(--red); padding-left: 16px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 24px 16px 64px; }
+@media (min-width: 768px) { .wrap { padding: 28px 32px 72px; } }
+h1.display { text-transform: uppercase; letter-spacing: -.01em; font-size: clamp(36px, 6vw, 72px); line-height: .95; margin: 0 0 6px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.grid-cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.big { font-family: var(--font-serif); font-size: clamp(24px, 2.1vw, 29px); line-height: 1.1; overflow-wrap: anywhere; }
+
+.skeleton { background: linear-gradient(90deg, var(--rule) 0%, var(--blue-soft) 50%, var(--rule) 100%);
+  background-size: 200% 100%; animation: shimmer 1.4s linear infinite; border-radius: 2px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.spinner { display: inline-block; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%;
+  animation: spin .7s linear infinite; vertical-align: -3px; margin-right: 8px; width: 14px; height: 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* the signature: a figure that does not hold gets a hand-drawn strike when it appears */
+.strike-draw { position: relative; display: inline-block; color: var(--muted); }
+.strike-draw::after { content: ""; position: absolute; left: -3px; right: -3px; top: 52%; height: 2px; background: var(--red);
+  transform: rotate(-2.5deg); transform-origin: left center; animation: draw .45s .15s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes draw { from { transform: rotate(-2.5deg) scaleX(0); } to { transform: rotate(-2.5deg) scaleX(1); } }
+.bar-grow { transform-origin: left; animation: grow-x .6s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* scroll reveals (motion.ts adds .vx-r, then .vx-in). Off with ?motion=off or prefers-reduced-motion. */
+html[data-motion="on"] .vx-r { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
+html[data-motion="on"] .vx-r.vx-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="on"]) *, html:not([data-motion="on"]) *::before, html:not([data-motion="on"]) *::after {
+    animation-duration: .001ms !important; animation-delay: 0s !important; transition-duration: .001ms !important; }
+}
+.skip { position: absolute; left: -999px; top: 8px; background: var(--blue); color: var(--paper); padding: 8px 12px; z-index: 100; }
+.skip:focus { left: 8px; }
