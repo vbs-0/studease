@@ -1,0 +1,33 @@
+[project]
+name = "studease"
+version = "0.1.0"
+description = "StudEase: tuition and fees, scholarships, payment allocation and student balance reconciliation"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "sqlalchemy>=2.0.36",
+  "psycopg[binary]>=3.2.3",
+  "alembic>=1.14",
+  "pydantic-settings>=2.6",
+  "pyjwt>=2.9",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.7", "httpx>=0.27"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["db: needs PostgreSQL (TEST_DATABASE_URL or the local dev cluster)", "slow: full-scale runs"]
+addopts = "-m 'not slow'"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["B008"]

@@ -1,0 +1,12 @@
+.env
+.env.local
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+node_modules/
+frontend/dist/
+.pgdata/
+data/full/*.csv
+data/full/*.json
+*.log
