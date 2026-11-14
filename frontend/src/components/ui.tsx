@@ -6,7 +6,7 @@ import { ApiError } from "../lib/api";
 import { inr, label, tone } from "../lib/format";
 
 export function Logo({ size = 30 }: { size?: number }) {
-  return <img src="/logo.png" width={size} height={size} alt="StudEase" style={{ display: "block", objectFit: "contain" }} />;
+  return <img src="/logo.png" width={size} height={size} alt="StudEase" decoding="async" style={{ display: "block", objectFit: "contain" }} />;
 }
 
 export function Stamp({ status }: { status: string }) {

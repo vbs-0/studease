@@ -1,10 +1,10 @@
 import { LogOut, Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router";
 import { useAuth, type Role } from "../lib/auth";
 import { label } from "../lib/format";
 import { initMotion } from "../lib/motion";
-import { Logo, Toaster, TopBar } from "./ui";
+import { Logo, PageLoading, Toaster, TopBar } from "./ui";
 
 interface Item { to: string; text: string; roles: Role[]; end?: boolean }
 const FINANCE: Role[] = ["ACADEMIC_ADMIN", "SUPPORT", "PLATFORM_ADMIN"];
@@ -60,7 +60,7 @@ export default function Shell() {
           <button className="vx-pill" onClick={signOut}><LogOut size={15} aria-hidden />Sign out</button>
         </div>
       </header>
-      <main id="main" className="vx-wrap"><Outlet /></main>
+      <main id="main" className="vx-wrap"><Suspense fallback={<PageLoading />}><Outlet /></Suspense></main>
       <Toaster />
     </div>
   );

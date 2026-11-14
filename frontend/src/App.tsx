@@ -1,21 +1,29 @@
+import { lazy } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Navigate, Outlet, RouterProvider, createBrowserRouter } from "react-router";
 import Shell, { homeFor } from "./components/Shell";
 import { Splash } from "./components/ui";
 import { ApiError } from "./lib/api";
 import { AuthProvider, useAuth, type Role } from "./lib/auth";
-import { Fees, Scholarships } from "./pages/Catalog";
 import { Forbidden, NotFound, RouteError } from "./pages/ErrorPages";
-import { AddStudent, Users } from "./pages/Admin";
-import Exceptions from "./pages/Exceptions";
 import { Forgot, Login, Reset, Signup } from "./pages/Auth";
-import { Enroll, MyFees, MyScholarships } from "./pages/Learner";
-import InvoicePage from "./pages/InvoicePage";
-import Overview from "./pages/Overview";
-import Quality from "./pages/Quality";
-import { MyAccount } from "./pages/StudentPage";
-import StudentRoute from "./pages/StudentPage";
-import Students from "./pages/Students";
+
+// Route-level code splitting: each page is its own chunk, fetched the first time it is visited.
+const page = <T extends Record<string, any>>(load: () => Promise<T>, key: keyof T) => lazy(() => load().then((m) => ({ default: m[key] })));
+const Fees = page(() => import("./pages/Catalog"), "Fees");
+const Scholarships = page(() => import("./pages/Catalog"), "Scholarships");
+const Exceptions = page(() => import("./pages/Exceptions"), "default");
+const Enroll = page(() => import("./pages/Learner"), "Enroll");
+const MyFees = page(() => import("./pages/Learner"), "MyFees");
+const MyScholarships = page(() => import("./pages/Learner"), "MyScholarships");
+const InvoicePage = page(() => import("./pages/InvoicePage"), "default");
+const Overview = page(() => import("./pages/Overview"), "default");
+const Quality = page(() => import("./pages/Quality"), "default");
+const MyAccount = page(() => import("./pages/StudentPage"), "MyAccount");
+const StudentRoute = page(() => import("./pages/StudentPage"), "default");
+const Students = page(() => import("./pages/Students"), "default");
+const AddStudent = page(() => import("./pages/Admin"), "AddStudent");
+const Users = page(() => import("./pages/Admin"), "Users");
 
 const client = new QueryClient({
   defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false, retry: (n, e) => !(e instanceof ApiError && e.status < 500 && e.status !== 0) && n < 2 } },

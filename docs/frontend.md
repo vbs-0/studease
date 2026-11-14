@@ -115,3 +115,13 @@ Who may do what is in [`permissions.md`](permissions.md) (generated from the rou
 icon and favicon are the hand-drawn cap, books and receipt (`public/logo.png`, `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`).
 Charts: the balance line is one point per ledger entry (red dot = charge, green dot = payment or award; above the zero line the student owes,
 below it they hold credit); the "money by kind" donut sums ledger entries by kind.
+
+## Loading performance
+
+- **Route-level code splitting:** every page after sign-in is a `React.lazy` chunk (`App.tsx`), fetched the first time it is visited. A
+  `Suspense` boundary in the shell shows the skeleton cards while the chunk loads. Sign-in, the error pages and the shell stay in the first
+  bundle so the first screen paints at once. Shared libraries are split into `react` and `query` chunks that the browser caches across releases.
+- **Cached forever, versioned by name:** hashed assets are served `immutable` by nginx, so a returning visitor downloads only what changed.
+- **Lists are paged, not loaded whole:** keyset pagination, 50 rows then "Load more"; exports follow the cursor on demand.
+- **Images:** the only raster image is the small logo, decoded asynchronously; charts are inline SVG (no chart library).
+- **Fonts:** self-hosted variable fonts, latin subsets first.
