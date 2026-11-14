@@ -268,11 +268,57 @@ Beyond the required features, these are implemented and tested or checkable in t
 
 ## Android app
 
-The same product as a native Android app, in [`mobile/`](mobile) (Flutter, Material 3). It signs in to the live API, shows the role-appropriate tabs (learner: Account, Enrol, Awards, Fees; staff: Overview, Students, Fees, Awards; instructor: Students), draws its own charts, caches the last response so it opens offline, and shares invoices and statements as CSV.
+The same product as a native Android app, in [`mobile/`](mobile): Flutter 3.44, Material 3, about 2,600 lines of Dart, no code generation. It talks to the same live API as the website, so every rule (roles, idempotent payments, the append-only ledger) is enforced by the server, never by the phone.
 
-- **Install:** download `StudEase.apk` from the [Releases page](https://github.com/vbs-0/studease/releases), allow "install unknown apps", open it. The build is debug-signed (fine for sideloading, not for a store).
+<p align="center">
+  <img src="docs/screenshots/mobile/sign-in.png" width="19%" alt="Sign in">
+  <img src="docs/screenshots/mobile/enrol.png" width="19%" alt="Enrol">
+  <img src="docs/screenshots/mobile/scholarships.png" width="19%" alt="Scholarships">
+  <img src="docs/screenshots/mobile/more.png" width="19%" alt="Account and settings">
+  <img src="docs/screenshots/mobile/overview.png" width="19%" alt="Staff overview">
+</p>
+
+### What it does, by role
+
+| Role | Bottom tabs | What they can do |
+|---|---|---|
+| Learner | Account, Enrol, Awards, Fees, More | Balance cards (settled, charged, paid), money by kind donut, balance-over-time chart, enrol in an open term, pay, see scholarships and the GPA and income band each decision used, invoices with line-level outstanding amounts and status history, export statements and invoices as CSV |
+| Instructor | Students, More | Read-only student list and student pages (no money figures, the server withholds them) |
+| Academic admin, Support, Platform admin | Overview, Students, Fees, Awards, More | Staff overview (open exceptions, charged and collected by month, invoices by status, term bars), search and page through ten thousand students, add a student, edit a profile, assign an award, publish a new fee version, resolve exceptions, user accounts (platform admin), data-quality report (platform admin only) |
+| Everyone | Sign in screen | Sign in, create a learner account, forgot and reset password, change password, light, dark or system theme |
+
+The tabs differ per role exactly as the website's navigation does, and a screen the role may not open is never shown.
+
+### How it is built
+
+```mermaid
+flowchart LR
+  UI["Screens (learner, staff, student, invoice, more)"] --> KIT["ui kit: Panel, Money, charts, forms, skeletons"]
+  UI --> FETCH["Fetch / ListPage: load, retry, pull to refresh"]
+  FETCH --> API["Api: one http client"]
+  API -->|"Bearer token"| SERVER["StudEase API (FastAPI)"]
+  API --> SEC[("flutter_secure_storage: token")]
+  API --> CACHE[("shared_preferences: last good response")]
+  API -->|"epoch bumps after a write"| FETCH
+```
+
+- **One API client** ([`lib/api.dart`](mobile/lib/api.dart)): a single place for the base URL, the bearer token, error envelopes. A 401 on a stored token signs the user out. Paged endpoints are followed by a cursor helper, so lists never load more than a page at a time.
+- **Token in the Android keystore** (`flutter_secure_storage`), never in plain preferences.
+- **Offline cache:** every successful read is stored on the phone, so screens still open with no signal and show an offline banner; writes are never queued or faked.
+- **Live refresh:** after any successful write the client bumps a counter that open screens listen to, so a payment made on one tab shows on the others without a manual refresh.
+- **Charts without a chart library:** the line chart (smooth curves), donut, pill bar and term bars are drawn with `CustomPainter`, which keeps the APK small and matches the website's look.
+- **Same design as the website:** off-white paper, ink black, the orange accent, Instrument Serif headings, ticket-notch metric cards, slide-up entrance and press feedback, dark theme, tabular figures for money.
+- **Money is integer paise**, formatted with Indian digit grouping (₹4,90,050.00) in one helper, as on the web.
+- **Sharing:** CSV statements and invoices go through the Android share sheet (`share_plus`), so they can be saved, mailed or opened in a spreadsheet.
+- **Fast states:** skeleton loaders instead of spinners, inline error boxes with a Try again button, form validation before any request.
+
+### Install, build, test
+
+- **Install:** download `StudEase.apk` from the [Releases page](https://github.com/vbs-0/studease/releases), allow "install unknown apps", open it. The build is debug-signed (fine for sideloading, not for a store). Verify it against `SHA256SUMS.txt`.
 - **Build it yourself:** `cd mobile && flutter pub get && flutter build apk --release` (needs Flutter 3.44 and the Android SDK). Point it elsewhere with `--dart-define=API_BASE=<your API url>/api/v1`.
+- **Checks:** `flutter analyze` runs in CI on every push (the `mobile` job).
 - **Firebase Test Lab (Robo):** upload the APK, then under Additional options set the test account credentials: username field `Email`, password field `Password`, with a demo account such as `learner@example.edu` and the demo password.
+- **Honest limits:** no push notifications, no in-app card payments (the demo records payments through the same API call the website uses), no iOS build, no Play Store signing.
 
 ## CI/CD pipeline
 
