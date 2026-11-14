@@ -144,7 +144,7 @@ export function StudentPage({ id }: { id: string }) {
             <section className="panel"><h2>Balance over time</h2>
               <p className="note m-0">Each dot is one ledger entry. The line climbs when a fee is charged (red dot) and drops when you pay or receive an award (green dot). Above the faint zero line you owe money; below it you hold credit. Hover a dot for the entry.</p>
               {ledger.isPending ? <Loading rows={3} /> : ledger.data && ledger.data.items.length > 1 ? (
-                <LineChart name="Running balance" labels={ledger.data.items.map((e: any) => shortDate(e.posted_on))} format={(n) => inr(n).replace(/\.00$/, "")}
+                <LineChart width={640} height={240} name="Running balance" labels={ledger.data.items.map((e: any) => shortDate(e.posted_on))} format={(n) => inr(n).replace(/\.00$/, "")}
                   series={[{ name: "Balance you owe", color: "#f75708", values: ledger.data.items.map((e: any) => e.running_balance_paise) }]}
                   dotColor={(i) => (ledger.data.items[i].amount_paise > 0 ? "#d63a12" : "#1f9d6b")}
                   tips={ledger.data.items.map((e: any) => `${shortDate(e.posted_on)}: ${label(e.entry_type)} ${inr(e.amount_paise, { signed: true })}, balance ${inr(e.running_balance_paise)}`)} />) : <p className="note">The chart appears after the first few ledger entries.</p>}

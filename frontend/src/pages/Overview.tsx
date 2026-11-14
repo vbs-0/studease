@@ -33,7 +33,7 @@ export default function Overview() {
         <Metric kind="mint" title="Open exceptions" value={d.open_exceptions} note={me?.role === "ACADEMIC_ADMIN" ? "Awaiting support review" : "Awaiting review"} to={me?.role === "ACADEMIC_ADMIN" ? undefined : "/exceptions"} />
       </div>
       <section className="panel mt-6"><h2>Charged and collected by month</h2>
-        <LineChart name="Monthly billing and collection" labels={d.by_month.map((m: any) => m.month)} format={(n) => `${(n / 1e7).toFixed(1)} Cr`}
+        <LineChart curve name="Monthly billing and collection" labels={d.by_month.map((m: any) => m.month)} format={(n) => `${(n / 1e7).toFixed(1)} Cr`}
           series={[{ name: "Charged", color: "#f75708", values: d.by_month.map((m: any) => m.charged_paise) }, { name: "Collected", color: "#1f9d6b", values: d.by_month.map((m: any) => m.paid_paise) },
             { name: "Refunded", color: "#d63a12", values: d.by_month.map((m: any) => m.refunded_paise) }]} />
       </section>
@@ -44,14 +44,14 @@ export default function Overview() {
         <section className="panel"><h2>Net billed by term</h2>
           <TrendBars bars={d.by_term.map((t: any) => ({ label: label(t.term_name), value: t.net_billed_paise }))} format={(n) => `${(n / 1e7).toFixed(1)} Cr`} />
         </section>
-        <section className="panel"><h2>Open exceptions by type</h2>
+        <section className="panel" style={{ gridColumn: "1 / -1" }}><h2>Open exceptions by type</h2>
           {Object.keys(d.open_by_type).length === 0 ? <p className="note">None open.</p> : (
             <div className="mt-3 grid gap-3">
               {Object.entries(d.open_by_type).map(([t, n]: any) => <PillBar key={t} text={label(t)} value={n} max={d.open_exceptions} display={n} red />)}
             </div>)}
         </section>
-        <section className="panel"><h2>Balance by program</h2>
-          <div className="mt-3 grid max-h-96 gap-3 overflow-y-auto pr-1">
+        <section className="panel" style={{ gridColumn: "1 / -1" }}><h2>Balance by program</h2>
+          <div className="mt-3 grid gap-x-12 gap-y-3 md:grid-cols-2">
             {d.by_program.map((p: any) => <PillBar key={p.program_id} text={p.name} value={p.balance_paise} max={maxProg} display={inr(p.balance_paise)} red={p.balance_paise < 0} />)}
           </div>
         </section>
