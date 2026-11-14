@@ -310,6 +310,16 @@ Beyond the required features, these are implemented and tested or checkable in t
 
 The same product as a native Android app, in [`mobile/`](mobile): Flutter 3.44, Material 3, about 2,600 lines of Dart, no code generation. It talks to the same live API as the website, so every rule (roles, idempotent payments, the append-only ledger) is enforced by the server, never by the phone.
 
+<table>
+<tr>
+<td align="center" width="20%"><img src="docs/screenshots/mobile/sign-in.png" alt="Sign in"><br><sub>Sign in, create account, demo roles</sub></td>
+<td align="center" width="20%"><img src="docs/screenshots/mobile/enrol.png" alt="Enrol"><br><sub>Enrol in an open term</sub></td>
+<td align="center" width="20%"><img src="docs/screenshots/mobile/scholarships.png" alt="Scholarships"><br><sub>Scholarships and decisions</sub></td>
+<td align="center" width="20%"><img src="docs/screenshots/mobile/more.png" alt="Account and settings"><br><sub>Account, theme, password</sub></td>
+<td align="center" width="20%"><img src="docs/screenshots/mobile/overview.png" alt="Staff overview"><br><sub>Staff overview with charts</sub></td>
+</tr>
+</table>
+
 ### What it does, by role
 
 | Role | Bottom tabs | What they can do |
