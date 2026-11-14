@@ -24,7 +24,7 @@ tar -C frontend -c dist | ssh "$HOST" "mkdir -p $BASE/releases/$REL/frontend && 
 
 echo "installing and switching"
 ssh "$HOST" "set -e; cd $BASE/releases/$REL/backend
-  cp $BASE/shared/.env .env && chmod 640 .env     # the one place secrets live, outside git; group studease reads it
+  cp $BASE/shared/.env .env && chgrp studease .env && chmod 640 .env     # the one place secrets live, outside git; group studease reads it
   export UV_PYTHON_INSTALL_DIR=$BASE/python       # a Python the service user can read (not under a home folder)
   uv sync --frozen --no-dev
   uv run alembic -c ../database/alembic.ini upgrade head
