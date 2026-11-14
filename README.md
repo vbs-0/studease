@@ -254,6 +254,29 @@ Beyond the required features, these are implemented and tested or checkable in t
 53. Phone layout of the website: no sideways scrolling at any width (grid tracks may shrink below their content), one-column cards on narrow screens, tabs that share one row, a compact header with an icon-only sign-out, 44 px touch targets and full-width toasts.
 54. A native Android app (`mobile/`, Flutter) with the same look and every feature of the website, per-role bottom navigation, pull-to-refresh, an offline copy of the last data, CSV sharing through the phone's share sheet, and light, dark or system theme.
 
+## Android app
+
+The same product as a native Android app, in [`mobile/`](mobile) (Flutter, Material 3). It signs in to the live API, shows the role-appropriate tabs (learner: Account, Enrol, Awards, Fees; staff: Overview, Students, Fees, Awards; instructor: Students), draws its own charts, caches the last response so it opens offline, and shares invoices and statements as CSV.
+
+- **Install:** download `StudEase-arm64.apk` from the [Releases page](https://github.com/vbs-0/studease/releases), allow "install unknown apps", open it. The build is debug-signed (fine for sideloading, not for a store).
+- **Build it yourself:** `cd mobile && flutter pub get && flutter build apk --release` (needs Flutter 3.44 and the Android SDK). Point it elsewhere with `--dart-define=API_BASE=http://10.0.2.2:8000/api/v1`.
+- **Robo test:** `mobile/robo/login.json` is a Firebase Test Lab Robo script that signs in as the demo learner (insert the demo password first).
+
+## CI/CD pipeline
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and pull request, as four jobs in parallel:
+
+| Job | What it proves |
+|---|---|
+| backend | A real PostgreSQL 16 service; `ruff`; the full pytest suite (318 tests); the generated docs are up to date (`docs --check`); the dataset reproduces byte for byte |
+| frontend | `tsc` type check, vitest, production build |
+| mobile | `flutter analyze` on the Android app |
+| hygiene | `scrub_check.py`: no secrets, no real-looking personal data |
+
+Optimisations: jobs run in parallel; `concurrency` cancels a superseded run so minutes go to the newest commit; `uv sync --frozen` with the uv cache keyed on the lockfile; npm, Flutter and Gradle caches; least-privilege `permissions: contents: read`; a `timeout-minutes` on every job so a hang cannot burn quota.
+
+Delivery: `deploy/deploy.sh` ships the site (build, copy, migrate, health check, roll back on failure). [`release-apk.yml`](.github/workflows/release-apk.yml) builds the APKs and publishes a GitHub Release when a `v*` tag is pushed, with SHA-256 checksums.
+
 ## Code architecture
 
 Three tiers in three folders. The business rules live in a pure `domain/` package that knows nothing about HTTP or SQL; everything else depends on it, never the other way round.

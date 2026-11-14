@@ -13,3 +13,6 @@ data/full/*.json
 
 .ci_clone/
 .ci_tmp/
+dist/
+mobile/.build.log
+.ci_tmp_result.txt

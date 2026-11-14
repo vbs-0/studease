@@ -4,9 +4,14 @@ on:
   pull_request:
 permissions:
   contents: read
+# a newer push to the same branch cancels the run still in progress, so CI minutes go to the latest commit only
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   backend:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     services:
       postgres:
         image: postgres:16
@@ -19,6 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true, cache-dependency-glob: backend/uv.lock }
       - name: Install
         run: cd backend && uv sync --frozen
       - name: Lint
@@ -31,6 +37,7 @@ jobs:
         run: cd backend && uv run python -m app.cli repro --scale starter
   frontend:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,9 +48,20 @@ jobs:
       - run: cd frontend && npm run build
   hygiene:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: No private details in the public repository
         run: python scripts/scrub_check.py
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+      - run: cd mobile && flutter pub get
+      - name: Static analysis (errors fail the build; style notes do not)
+        run: cd mobile && flutter analyze --no-fatal-infos --no-fatal-warnings
