@@ -333,6 +333,8 @@ flowchart LR
 
 Optimisations: jobs run in parallel; `concurrency` cancels a superseded run so minutes go to the newest commit; `uv sync --frozen` with the uv cache keyed on the lockfile; npm, Flutter and Gradle caches; least-privilege `permissions: contents: read`; a `timeout-minutes` on every job so a hang cannot burn quota.
 
+Container image: [`backend/Dockerfile`](backend/Dockerfile) builds the API as a small non-root image, and [`docker.yml`](.github/workflows/docker.yml) publishes it to GitHub Packages as `ghcr.io/vbs-0/studease-api` (`latest` and the version on each `v*` tag, `edge` on a manual run), with a layer cache.
+
 Delivery: `deploy/deploy.sh` ships the site (build, copy, migrate, health check, roll back on failure). [`release-apk.yml`](.github/workflows/release-apk.yml) builds the APKs and publishes a GitHub Release when a `v*` tag is pushed, with SHA-256 checksums.
 
 ## Code architecture
