@@ -135,7 +135,7 @@ and each adds a failure mode.
 
 | Practice | Where | Why | Level |
 |---|---|---|---|
-| **Test-first for every rule**: the test with literal numbers is written before the function | `tests/domain/` | The expected number is decided from the rule, not copied from the code's output | **Full** |
+| **Hand-derived expectations for every rule**: the expected numbers in `tests/domain/` are worked out from the written rule (docs/architecture.md section 5) with literal values, written alongside the function, never copied from its output | `tests/domain/` | A failing test means the code and the written rule disagree; it is not strict red-green-refactor, and the doc does not claim it | **Full** |
 | **Boundary values**: GPA 8.99 and 9.00; term day 14, 15, 30, 31; late-fee floor and cap; effective date on the exact day | `tests/domain/` | Off-by-one errors live at the edges | **Full** |
 | **Property-style conservation tests** over a table of cases | `tests/domain/test_allocation.py` | States an invariant, not just an example | **Solid**: hand-picked table, not a property-testing library |
 | **Test pyramid**: many pure unit tests, fewer generator tests, fewest API tests on a real database | `tests/domain`, `tests/datagen`, `tests/engine`, `tests/api` | Fast feedback where the logic is; real Postgres where constraints and locks matter | **Full** |

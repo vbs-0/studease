@@ -1,0 +1,49 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: studease, POSTGRES_PASSWORD: studease, POSTGRES_DB: studease_test }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U studease" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://studease:studease@127.0.0.1:5432/studease_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install
+        run: cd backend && uv sync --frozen
+      - name: Lint
+        run: cd backend && uv run ruff check app tests
+      - name: Test
+        run: cd backend && uv run pytest -q
+      - name: Generated docs are current
+        run: cd backend && uv run python -m app.cli docs --check
+      - name: Reproducible data
+        run: cd backend && uv run python -m app.cli repro --scale starter
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: cd frontend && npm ci --no-audit --no-fund
+      - run: cd frontend && npx tsc -b
+      - run: cd frontend && npm test
+      - run: cd frontend && npm run build
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: No private details in the public repository
+        run: python scripts/scrub_check.py

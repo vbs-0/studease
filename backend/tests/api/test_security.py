@@ -202,10 +202,11 @@ def test_s23_a_reset_link_works_once_and_only_for_its_user(client, loaded):
     assert client.post(f"{API}/auth/reset", json={"token": token, "new_password": "short"}).status_code == 422
 
 
-def test_s6_production_refuses_default_secrets(monkeypatch):
+def test_s6_production_refuses_default_secrets():
     from app.config import Settings
+    bare = {"_env_file": None}                       # ignore any local .env: the test states every value itself
     with pytest.raises(RuntimeError):
-        Settings(env="prod").check()
+        Settings(env="prod", **bare).check()
     with pytest.raises(RuntimeError):
-        Settings(env="prod", jwt_secret="x" * 40).check()          # secret fine, demo password still default
-    Settings(env="prod", jwt_secret="x" * 40, demo_password="a-strong-password").check()
+        Settings(env="prod", jwt_secret="x" * 40, **bare).check()          # secret fine, demo password still default
+    Settings(env="prod", jwt_secret="x" * 40, demo_password="a-strong-password", **bare).check()
