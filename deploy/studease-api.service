@@ -8,7 +8,7 @@ User=studease
 Group=studease
 WorkingDirectory=/opt/studease/app/backend
 EnvironmentFile=/opt/studease/app/backend/.env
-ExecStart=/opt/studease/app/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8100 --workers 2 --proxy-headers
+ExecStart=/opt/studease/app/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8110 --workers 2 --proxy-headers
 Restart=on-failure
 RestartSec=3
 # S-17: run unprivileged and read-only except for what the app needs

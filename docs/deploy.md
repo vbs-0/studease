@@ -14,7 +14,7 @@ application itself runs the same way locally (see the README); deployment only a
   app -> releases/...    symlink to the live release (switched atomically)
 ```
 
-nginx serves `frontend/dist` and proxies `/api/` to uvicorn on `127.0.0.1:8100`. The API is never exposed directly.
+nginx serves `frontend/dist` and proxies `/api/` to uvicorn on `127.0.0.1:8110`. The API is never exposed directly.
 
 ## One-time setup
 
@@ -24,7 +24,9 @@ real ones into the repository.
 1. **System user and folders**
    ```bash
    sudo useradd --system --home /opt/studease --shell /usr/sbin/nologin studease
-   sudo mkdir -p /opt/studease/shared /opt/studease/releases && sudo chown -R studease: /opt/studease
+   sudo mkdir -p /opt/studease/shared /opt/studease/releases
+   # the deploying user owns the tree (it writes releases); the service user reads through the group
+   sudo chown -R <deploy-user>:studease /opt/studease && sudo chmod -R g+rX /opt/studease
    ```
 2. **Database** (S-13: one role that owns only its own databases; connect rights removed from everyone else)
    ```bash
@@ -35,7 +37,7 @@ real ones into the repository.
    SQL
    ```
    PostgreSQL must listen on localhost only (`listen_addresses = 'localhost'`, the default).
-3. **Environment file** `/opt/studease/shared/.env` (mode 600). Required keys:
+3. **Environment file** `/opt/studease/shared/.env` (owner the deploy user, group `studease`, mode 640). Required keys:
    `ENV=prod`, `DATABASE_URL` (the `postgresql+psycopg://` URL for the role above), `JWT_SECRET` (32+ random
    characters), `DEMO_PASSWORD` (12+ characters; the password of the five demo logins), `APP_URL` and `CORS_ORIGINS`
    (both the public https origin). Optional mail: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM`.
