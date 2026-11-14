@@ -5,6 +5,8 @@ validate   run the nine validation checks on the written files, write validation
 repro      generate twice with the same seed and compare row counts and checksums, write repro.json
 reconcile  run the detectors on the written files and score them against ground truth, write evaluation.json
 load       bulk-load the written files and the detected exceptions into PostgreSQL (DATABASE_URL)
+docs       write docs/data_dictionary.md, erd.md and walkthrough.md from the schema and the starter data
+           (`docs --check` fails if the committed copies are stale)
 all        generate, validate, repro and reconcile (no database needed; `load` is separate)
 """
 from __future__ import annotations
@@ -95,12 +97,22 @@ def cmd_load(a) -> int:
     return 0
 
 
+def cmd_docs(a) -> int:
+    from app import docs_gen
+    if a.check:
+        stale = docs_gen.check()
+        print("generated docs are up to date" if not stale else f"stale: {', '.join(stale)}")
+        return 1 if stale else 0
+    print("wrote", ", ".join(docs_gen.write_all()))
+    return 0
+
+
 def cmd_all(a) -> int:
     return max(cmd_generate(a), cmd_validate(a), cmd_repro(a), cmd_reconcile(a))
 
 
 COMMANDS = {"generate": cmd_generate, "validate": cmd_validate, "repro": cmd_repro, "reconcile": cmd_reconcile,
-            "load": cmd_load, "all": cmd_all}
+            "load": cmd_load, "docs": cmd_docs, "all": cmd_all}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -109,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("command", choices=sorted(COMMANDS))
     ap.add_argument("--scale", choices=sorted(SCALES), default="starter")
     ap.add_argument("--seed", type=int, default=DEFAULT_SEED)
+    ap.add_argument("--check", action="store_true", help="with `docs`: fail if the generated documents are stale")
     a = ap.parse_args(argv)
     return COMMANDS[a.command](a)
 
