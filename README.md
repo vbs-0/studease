@@ -33,7 +33,7 @@ Start with [docs/walkthrough.md](docs/walkthrough.md) (one student followed end 
 | ![Add student](docs/screenshots/add-student.png) | ![Dark mode](docs/screenshots/overview-dark.png) |
 | Staff data entry | Dark theme |
 
-Also in `docs/screenshots/`: `learner-enroll.png`, `students.png`, `data-quality.png`.
+Also in `docs/screenshots/`: `learner-enroll.png`, `students.png`, `data-quality.png`. All are 1440 by 810 desktop captures.
 
 ## Quick start
 

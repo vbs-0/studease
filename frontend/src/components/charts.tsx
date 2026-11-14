@@ -48,7 +48,7 @@ export function LineChart({ labels, series, format, height = 280, name, tips, do
                   <title>{tips?.[i] ?? `${s.name}, ${labels[i]}: ${format(s.values[i])}`}</title></circle>))}
             </g>);
         })}
-        {labels.map((t, i) => i % step === 0 || i === n - 1 ? <text key={i} x={x(i)} y={height - 8} textAnchor={i === 0 ? "start" : i === n - 1 ? "end" : "middle"} fontSize="13" fill="var(--muted)">{t}</text> : null)}
+        {labels.map((t, i) => (i % step === 0 && (n - 1 - i >= step || i === n - 1) && labels[i] !== labels[i - 1]) || i === n - 1 ? <text key={i} x={x(i)} y={height - 8} textAnchor={i === 0 ? "start" : i === n - 1 ? "end" : "middle"} fontSize="13" fill="var(--muted)">{t}</text> : null)}
         <text x={L} y={T - 3} fontSize="12" fill="var(--muted)">{format(hi)}</text>
         {lo < 0 && <text x={W - R} y={y(0) - 4} textAnchor="end" fontSize="12" fill="var(--muted)">{format(0)} (settled)</text>}
         {lo < 0 && <text x={L} y={height - B - 4} fontSize="12" fill="var(--muted)">{format(lo)}</text>}
