@@ -3,7 +3,9 @@
 generate   write the dataset (CSV, plus JSON and SQL for starter) with a manifest
 validate   run the nine validation checks on the written files, write validation_summary.json
 repro      generate twice with the same seed and compare row counts and checksums, write repro.json
-all        generate, validate and repro (the database steps are separate: load, reconcile)
+reconcile  run the detectors on the written files and score them against ground truth, write evaluation.json
+load       bulk-load the written files and the detected exceptions into PostgreSQL (DATABASE_URL)
+all        generate, validate, repro and reconcile (no database needed; `load` is separate)
 """
 from __future__ import annotations
 
@@ -17,6 +19,7 @@ from app.datagen import validate as validate_mod
 from app.datagen import writer
 from app.datagen.generator import DEFAULT_SEED, generate
 from app.datagen.scale import SCALES
+from app.engine import detect, evaluate, loader
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -63,11 +66,41 @@ def cmd_repro(a) -> int:
     return 0 if res["identical"] else 1
 
 
+def cmd_reconcile(a) -> int:
+    ds, gt = writer.read(paths(a.scale)["data"])
+    exceptions = detect.run(ds)                      # detectors never receive the ground truth
+    res = evaluate.run(exceptions, gt, ds)
+    write_json(paths(a.scale)["reports"] / "evaluation.json", res)
+    write_json(paths(a.scale)["reports"] / "exceptions.json", exceptions)
+    d = res["detection"]
+    for kind, t in d["per_type"].items():
+        print(f"{kind:<30} labelled={t['labelled']:>4} reported={t['reported']:>4} precision={t['precision']} "
+              f"recall={t['recall']} f1={t['f1']}")
+    o = d["overall"]
+    print(f"OVERALL precision={o['precision']} recall={o['recall']} f1={o['f1']} macro_f1={d['macro_f1']}")
+    b = res["business"]
+    print(f"collection_rate={b['collection_rate']} reconciliation_rate={b['reconciliation_rate']} "
+          f"late_fee_incidence={b['late_fee_incidence']}")
+    return 0 if o["false_positives"] == 0 and o["false_negatives"] == 0 else 1
+
+
+def cmd_load(a) -> int:
+    import time
+
+    from app.db import engine
+    ds, gt = writer.read(paths(a.scale)["data"])
+    started = time.perf_counter()
+    counts = loader.load(engine, ds, gt, detect.run(ds))
+    print(f"loaded {sum(counts.values())} rows into {len(counts)} tables in {time.perf_counter() - started:.1f}s")
+    return 0
+
+
 def cmd_all(a) -> int:
-    return max(cmd_generate(a), cmd_validate(a), cmd_repro(a))
+    return max(cmd_generate(a), cmd_validate(a), cmd_repro(a), cmd_reconcile(a))
 
 
-COMMANDS = {"generate": cmd_generate, "validate": cmd_validate, "repro": cmd_repro, "all": cmd_all}
+COMMANDS = {"generate": cmd_generate, "validate": cmd_validate, "repro": cmd_repro, "reconcile": cmd_reconcile,
+            "load": cmd_load, "all": cmd_all}
 
 
 def main(argv: list[str] | None = None) -> int:

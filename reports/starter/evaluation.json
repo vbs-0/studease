@@ -1,0 +1,132 @@
+{
+  "detection": {
+    "per_type": {
+      "ALLOC_EXCEEDS_PAYMENT": {
+        "true_positives": 8,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "labelled": 8,
+        "reported": 8,
+        "decision_correct": 8,
+        "value_correct": 8
+      },
+      "SCHOLARSHIP_EXCEEDS_ELIGIBLE": {
+        "true_positives": 6,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "labelled": 6,
+        "reported": 6,
+        "decision_correct": 6,
+        "value_correct": 6
+      },
+      "DUPLICATE_INVOICE": {
+        "true_positives": 5,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "labelled": 5,
+        "reported": 5,
+        "decision_correct": 5,
+        "value_correct": 5
+      },
+      "REFUND_EXCEEDS_NET_PAID": {
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "labelled": 4,
+        "reported": 4,
+        "decision_correct": 4,
+        "value_correct": 4
+      },
+      "BALANCE_LEDGER_MISMATCH": {
+        "true_positives": 8,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "labelled": 8,
+        "reported": 8,
+        "decision_correct": 8,
+        "value_correct": 8
+      }
+    },
+    "overall": {
+      "true_positives": 31,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "macro_f1": 1.0
+  },
+  "business": {
+    "billed_paise": 15971274863,
+    "waived_paise": 309555500,
+    "scholarships_paise": 2298582125,
+    "adjustments_paise": 274398525,
+    "net_receivable_paise": 13088738713,
+    "collected_paise": 10572336734,
+    "refunded_paise": 230358622,
+    "net_collected_paise": 10341978112,
+    "outstanding_paise": 2677420509,
+    "credit_held_paise": 39789932,
+    "collection_rate": 0.7901,
+    "reconciliation_rate": 0.984,
+    "late_fee_incidence": 0.294,
+    "invoices": 1500,
+    "invoice_status": {
+      "CANCELLED": 5,
+      "ISSUED": 131,
+      "OVERDUE": 105,
+      "PAID": 1041,
+      "PARTIALLY_PAID": 218
+    },
+    "payment_status": {
+      "ALLOCATED": 2473,
+      "PARTIALLY_ALLOCATED": 27
+    },
+    "enrollment_status": {
+      "CANCELLED": 5,
+      "COMPLETED": 972,
+      "ENROLLED": 486,
+      "WITHDRAWN": 32
+    },
+    "awards_by_scheme": {
+      "INTL_EXCELLENCE": {
+        "awards": 1,
+        "amount_paise": 1280000
+      },
+      "MERIT_GOLD": {
+        "awards": 139,
+        "amount_paise": 633052620
+      },
+      "MERIT_SILVER": {
+        "awards": 286,
+        "amount_paise": 628455765
+      },
+      "NEED_BASED": {
+        "awards": 293,
+        "amount_paise": 970160204
+      },
+      "SPORTS": {
+        "awards": 31,
+        "amount_paise": 89920000
+      }
+    }
+  },
+  "exceptions_reported": 31,
+  "labelled_cases": 31
+}
