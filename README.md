@@ -259,7 +259,7 @@ Beyond the required features, these are implemented and tested or checkable in t
 The same product as a native Android app, in [`mobile/`](mobile) (Flutter, Material 3). It signs in to the live API, shows the role-appropriate tabs (learner: Account, Enrol, Awards, Fees; staff: Overview, Students, Fees, Awards; instructor: Students), draws its own charts, caches the last response so it opens offline, and shares invoices and statements as CSV.
 
 - **Install:** download `StudEase-arm64.apk` from the [Releases page](https://github.com/vbs-0/studease/releases), allow "install unknown apps", open it. The build is debug-signed (fine for sideloading, not for a store).
-- **Build it yourself:** `cd mobile && flutter pub get && flutter build apk --release` (needs Flutter 3.44 and the Android SDK). Point it elsewhere with `--dart-define=API_BASE=http://10.0.2.2:8000/api/v1`.
+- **Build it yourself:** `cd mobile && flutter pub get && flutter build apk --release` (needs Flutter 3.44 and the Android SDK). Point it elsewhere with `--dart-define=API_BASE=<your API url>/api/v1`.
 - **Robo test:** `mobile/robo/login.json` is a Firebase Test Lab Robo script that signs in as the demo learner (insert the demo password first).
 
 ## CI/CD pipeline
