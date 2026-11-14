@@ -10,3 +10,6 @@ frontend/dist/
 data/full/*.csv
 data/full/*.json
 *.log
+
+.ci_clone/
+.ci_tmp/
