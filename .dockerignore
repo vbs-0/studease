@@ -1,0 +1,13 @@
+node_modules
+.venv
+.git
+.pgdata
+.ci_clone
+.ci_tmp
+mobile
+frontend
+dist
+data/full
+**/__pycache__
+backend/.env
+*.log
