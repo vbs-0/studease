@@ -1,0 +1,130 @@
+{
+  "scale": "full",
+  "as_of": "2026-09-05",
+  "ok": true,
+  "unexpected_violations": 0,
+  "labels": 600,
+  "labels_without_violation": [],
+  "rows": {
+    "program": 20,
+    "term": 3,
+    "scholarship_scheme": 5,
+    "student": 10000,
+    "fee_schedule": 381,
+    "enrollment": 29900,
+    "invoice": 30000,
+    "eligibility": 25408,
+    "scholarship": 15000,
+    "invoice_line": 174001,
+    "payment": 50000,
+    "payment_allocation": 146830,
+    "refund": 1859,
+    "ledger_entry": 225242,
+    "student_balance": 10000,
+    "event": 285389
+  },
+  "checks": [
+    {
+      "id": "C1",
+      "name": "Primary keys are unique and well formed",
+      "rows_checked": 1004038,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C2",
+      "name": "Foreign keys resolve",
+      "rows_checked": 1622169,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C3",
+      "name": "Enums, required fields and lengths",
+      "rows_checked": 7427241,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C4",
+      "name": "Date ordering",
+      "rows_checked": 449833,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C5",
+      "name": "Arithmetic and business rules reconcile",
+      "rows_checked": 348168,
+      "violations": 1259,
+      "expected": 1259,
+      "unexpected": 0,
+      "rules": {
+        "alloc_le_line": 148,
+        "alloc_le_payment": 150,
+        "balance_components": 150,
+        "balance_identity": 330,
+        "balance_matches_ledger": 150,
+        "late_fee_amount": 11,
+        "refund_le_net_paid": 80,
+        "scholarship_le_eligible": 120,
+        "scholarship_matches_credit": 120
+      },
+      "examples": []
+    },
+    {
+      "id": "C6",
+      "name": "Lifecycle transitions are legal",
+      "rows_checked": 437556,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C7",
+      "name": "No duplicates",
+      "rows_checked": 110589,
+      "violations": 100,
+      "expected": 100,
+      "unexpected": 0,
+      "rules": {
+        "one_invoice_per_enrollment": 100
+      },
+      "examples": []
+    },
+    {
+      "id": "C8",
+      "name": "Volume targets are met",
+      "rows_checked": 10,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C9",
+      "name": "Ground truth does not leak",
+      "rows_checked": 1004166,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    }
+  ]
+}

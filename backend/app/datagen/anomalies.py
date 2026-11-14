@@ -89,7 +89,7 @@ def inject(ds: Dataset, scale: Scale, seed: int) -> list[dict]:
         ds["payment_allocation"].append({
             "allocation_id": ids.allocation_id(pid, allocs_n[pid] + 1), "payment_id": pid,
             "invoice_line_id": target["invoice_line_id"], "amount_paise": extra,
-            "allocated_on": min(AS_OF, p["received_on"] + timedelta(days=1))})
+            "allocated_on": max(min(AS_OF, p["received_on"] + timedelta(days=1)), target["posted_on"])})
         _truth(truth, "ALLOC_EXCEEDS_PAYMENT", "payment", pid, sid, "REVERSE_ALLOCATION", extra,
                f"an extra allocation of {extra} paise on a fully allocated payment of {p['amount_paise']}")
 

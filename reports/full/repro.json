@@ -1,0 +1,111 @@
+{
+  "scale": "full",
+  "seed": 20261022,
+  "identical": true,
+  "tables": {
+    "program": {
+      "rows": 20,
+      "sha256_run1": "1c842e04ec48672c39bc2b0141d65fc080d25e6c8730f660198305fbdde79319",
+      "sha256_run2": "1c842e04ec48672c39bc2b0141d65fc080d25e6c8730f660198305fbdde79319",
+      "match": true
+    },
+    "term": {
+      "rows": 3,
+      "sha256_run1": "b0d9c497059cdef320138c5d078dd175aef42c378459b0e1d58496aab85e014f",
+      "sha256_run2": "b0d9c497059cdef320138c5d078dd175aef42c378459b0e1d58496aab85e014f",
+      "match": true
+    },
+    "scholarship_scheme": {
+      "rows": 5,
+      "sha256_run1": "b1e322cc34087f8dbb3c49ca61b5fd96b1192f03e58fce4a6edc08dc60db72e7",
+      "sha256_run2": "b1e322cc34087f8dbb3c49ca61b5fd96b1192f03e58fce4a6edc08dc60db72e7",
+      "match": true
+    },
+    "student": {
+      "rows": 10000,
+      "sha256_run1": "b9cb810c7d37c0f869adcc66910ba37dba047699accb05b83ec89e2773b85511",
+      "sha256_run2": "b9cb810c7d37c0f869adcc66910ba37dba047699accb05b83ec89e2773b85511",
+      "match": true
+    },
+    "fee_schedule": {
+      "rows": 381,
+      "sha256_run1": "90a1c6eef40429d92231e2fd9745cbd35e754bb35bd08cbc4bebb3f98a7af362",
+      "sha256_run2": "90a1c6eef40429d92231e2fd9745cbd35e754bb35bd08cbc4bebb3f98a7af362",
+      "match": true
+    },
+    "enrollment": {
+      "rows": 29900,
+      "sha256_run1": "f039b39adcdeb9a89074474e6350e77dcb01c308a5d774d6665e31b5ac903f05",
+      "sha256_run2": "f039b39adcdeb9a89074474e6350e77dcb01c308a5d774d6665e31b5ac903f05",
+      "match": true
+    },
+    "invoice": {
+      "rows": 30000,
+      "sha256_run1": "fd97da80eb37211ed6038d35d82b004cef293d8e819149099d5e30a2b72a3d1c",
+      "sha256_run2": "fd97da80eb37211ed6038d35d82b004cef293d8e819149099d5e30a2b72a3d1c",
+      "match": true
+    },
+    "eligibility": {
+      "rows": 25408,
+      "sha256_run1": "db9d5d701ed3554e918e113a9cfee317d849e094ca1c60d2a16b5ffb2b75b5d1",
+      "sha256_run2": "db9d5d701ed3554e918e113a9cfee317d849e094ca1c60d2a16b5ffb2b75b5d1",
+      "match": true
+    },
+    "scholarship": {
+      "rows": 15000,
+      "sha256_run1": "f810e523c889394e038fd1d4674969915ce71b3211d2a3b8c8cc58192f12b817",
+      "sha256_run2": "f810e523c889394e038fd1d4674969915ce71b3211d2a3b8c8cc58192f12b817",
+      "match": true
+    },
+    "invoice_line": {
+      "rows": 174001,
+      "sha256_run1": "0acc2936c4ba913c7f305f497476246607d03c189b8228ddd09d198642cedf9c",
+      "sha256_run2": "0acc2936c4ba913c7f305f497476246607d03c189b8228ddd09d198642cedf9c",
+      "match": true
+    },
+    "payment": {
+      "rows": 50000,
+      "sha256_run1": "44c4ceea32ac7deeddf5804f9dd039a0cd3a40ff83c1bbcfca9afb4d2a064065",
+      "sha256_run2": "44c4ceea32ac7deeddf5804f9dd039a0cd3a40ff83c1bbcfca9afb4d2a064065",
+      "match": true
+    },
+    "payment_allocation": {
+      "rows": 146830,
+      "sha256_run1": "36de9606efd64868d601af803ba9873dcd18801f66d58f9e7f676e75ebf7ea9b",
+      "sha256_run2": "36de9606efd64868d601af803ba9873dcd18801f66d58f9e7f676e75ebf7ea9b",
+      "match": true
+    },
+    "refund": {
+      "rows": 1859,
+      "sha256_run1": "a5d5b457402dd75a3626c3bfbe56bba18eb03c8ad30f15f2f4d24bd1fd8f9985",
+      "sha256_run2": "a5d5b457402dd75a3626c3bfbe56bba18eb03c8ad30f15f2f4d24bd1fd8f9985",
+      "match": true
+    },
+    "ledger_entry": {
+      "rows": 225242,
+      "sha256_run1": "ee891528a61f1403672b071dbf258a5fe5b1f2b36dd771208e077391d25902a7",
+      "sha256_run2": "ee891528a61f1403672b071dbf258a5fe5b1f2b36dd771208e077391d25902a7",
+      "match": true
+    },
+    "student_balance": {
+      "rows": 10000,
+      "sha256_run1": "16265be7052497b841c65e18ace8c8cee7942d1c67dd5976059022a409209a25",
+      "sha256_run2": "16265be7052497b841c65e18ace8c8cee7942d1c67dd5976059022a409209a25",
+      "match": true
+    },
+    "event": {
+      "rows": 285389,
+      "sha256_run1": "18f609d7931f327b1f621e576139f67d30d5e6b29b72395a33cd5ac1bade4b9e",
+      "sha256_run2": "18f609d7931f327b1f621e576139f67d30d5e6b29b72395a33cd5ac1bade4b9e",
+      "match": true
+    },
+    "ground_truth": {
+      "rows": 600,
+      "sha256_run1": "e22d16549d238982cfeb82a40afbbb932231950c8ae0fc44707d60626aea9f25",
+      "sha256_run2": "e22d16549d238982cfeb82a40afbbb932231950c8ae0fc44707d60626aea9f25",
+      "match": true
+    }
+  },
+  "total_rows": 1004038,
+  "matches_committed_manifest": true
+}

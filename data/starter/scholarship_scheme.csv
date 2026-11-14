@@ -1,0 +1,6 @@
+scheme_code,name,min_gpa,required_income_band,requires_sports_quota,requires_international,award_type,award_bp,award_fixed_paise,priority
+INTL_EXCELLENCE,International Excellence,8.50,,false,true,PERCENT,2000,,5
+MERIT_GOLD,Merit Gold,9.00,,false,false,PERCENT,5000,,1
+MERIT_SILVER,Merit Silver,8.00,,false,false,PERCENT,2500,,2
+NEED_BASED,Need Based,6.00,LOW,false,false,PERCENT,4000,,3
+SPORTS,Sports Excellence,5.50,,true,false,FIXED,,3000000,4

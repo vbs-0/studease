@@ -1,0 +1,129 @@
+{
+  "scale": "starter",
+  "as_of": "2026-09-05",
+  "ok": true,
+  "unexpected_violations": 0,
+  "labels": 31,
+  "labels_without_violation": [],
+  "rows": {
+    "program": 20,
+    "term": 3,
+    "scholarship_scheme": 5,
+    "student": 500,
+    "fee_schedule": 381,
+    "enrollment": 1495,
+    "invoice": 1500,
+    "eligibility": 1251,
+    "scholarship": 750,
+    "invoice_line": 8622,
+    "payment": 2500,
+    "payment_allocation": 7350,
+    "refund": 77,
+    "ledger_entry": 11167,
+    "student_balance": 500,
+    "event": 14218
+  },
+  "checks": [
+    {
+      "id": "C1",
+      "name": "Primary keys are unique and well formed",
+      "rows_checked": 50339,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C2",
+      "name": "Foreign keys resolve",
+      "rows_checked": 81336,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C3",
+      "name": "Enums, required fields and lengths",
+      "rows_checked": 373043,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C4",
+      "name": "Date ordering",
+      "rows_checked": 22755,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C5",
+      "name": "Arithmetic and business rules reconcile",
+      "rows_checked": 17434,
+      "violations": 65,
+      "expected": 65,
+      "unexpected": 0,
+      "rules": {
+        "alloc_le_line": 8,
+        "alloc_le_payment": 8,
+        "balance_components": 8,
+        "balance_identity": 17,
+        "balance_matches_ledger": 8,
+        "refund_le_net_paid": 4,
+        "scholarship_le_eligible": 6,
+        "scholarship_matches_credit": 6
+      },
+      "examples": []
+    },
+    {
+      "id": "C6",
+      "name": "Lifecycle transitions are legal",
+      "rows_checked": 21791,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C7",
+      "name": "No duplicates",
+      "rows_checked": 5872,
+      "violations": 5,
+      "expected": 5,
+      "unexpected": 0,
+      "rules": {
+        "one_invoice_per_enrollment": 5
+      },
+      "examples": []
+    },
+    {
+      "id": "C8",
+      "name": "Volume targets are met",
+      "rows_checked": 10,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    },
+    {
+      "id": "C9",
+      "name": "Ground truth does not leak",
+      "rows_checked": 50467,
+      "violations": 0,
+      "expected": 0,
+      "unexpected": 0,
+      "rules": {},
+      "examples": []
+    }
+  ]
+}

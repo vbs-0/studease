@@ -1,0 +1,36 @@
+-- StudEase seed data. scale=starter seed=20261022. Load after `alembic upgrade head`.
+-- ground truth: kept apart from the input seed on purpose
+BEGIN;
+INSERT INTO gt.ground_truth (gt_id, issue_type, entity_type, entity_id, student_id, expected_decision, expected_value_paise, details) VALUES
+('GT-000001', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-000775', 'STU-000066', 'REVERSE_ALLOCATION', 113432, 'an extra allocation of 113432 paise on a fully allocated payment of 1365000'),
+('GT-000002', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-002096', 'STU-000301', 'REVERSE_ALLOCATION', 115340, 'an extra allocation of 115340 paise on a fully allocated payment of 644000'),
+('GT-000003', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-001061', 'STU-000334', 'REVERSE_ALLOCATION', 572908, 'an extra allocation of 572908 paise on a fully allocated payment of 3160000'),
+('GT-000004', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-001916', 'STU-000464', 'REVERSE_ALLOCATION', 132557, 'an extra allocation of 132557 paise on a fully allocated payment of 1599000'),
+('GT-000005', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-002114', 'STU-000189', 'REVERSE_ALLOCATION', 871290, 'an extra allocation of 871290 paise on a fully allocated payment of 3780000'),
+('GT-000006', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-000034', 'STU-000130', 'REVERSE_ALLOCATION', 768105, 'an extra allocation of 768105 paise on a fully allocated payment of 6337500'),
+('GT-000007', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-000832', 'STU-000183', 'REVERSE_ALLOCATION', 180671, 'an extra allocation of 180671 paise on a fully allocated payment of 1027125'),
+('GT-000008', 'ALLOC_EXCEEDS_PAYMENT', 'payment', 'PAY-2026-000318', 'STU-000437', 'REVERSE_ALLOCATION', 1542218, 'an extra allocation of 1542218 paise on a fully allocated payment of 6860400'),
+('GT-000009', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'scholarship', 'SCH-2026-000691', 'STU-000381', 'CAP_SCHOLARSHIP', 6400000, 'award raised to 8821120 paise against eligible fees of 6400000'),
+('GT-000010', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'scholarship', 'SCH-2026-000453', 'STU-000419', 'CAP_SCHOLARSHIP', 5600000, 'award raised to 7371840 paise against eligible fees of 5600000'),
+('GT-000011', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'scholarship', 'SCH-2026-000389', 'STU-000286', 'CAP_SCHOLARSHIP', 4720000, 'award raised to 6120424 paise against eligible fees of 4720000'),
+('GT-000012', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'scholarship', 'SCH-2026-000517', 'STU-000048', 'CAP_SCHOLARSHIP', 6400000, 'award raised to 8789760 paise against eligible fees of 6400000'),
+('GT-000013', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'scholarship', 'SCH-2026-000474', 'STU-000455', 'CAP_SCHOLARSHIP', 3800000, 'award raised to 4535300 paise against eligible fees of 3800000'),
+('GT-000014', 'SCHOLARSHIP_EXCEEDS_ELIGIBLE', 'scholarship', 'SCH-2026-000718', 'STU-000430', 'CAP_SCHOLARSHIP', 10900000, 'award raised to 14582020 paise against eligible fees of 10900000'),
+('GT-000015', 'DUPLICATE_INVOICE', 'invoice', 'INV-STU-000256-2026-001496', 'STU-000256', 'VOID_DUPLICATE', 10750000, 'second invoice for ENR-000256-2026-SPRING; the first is INV-STU-000256-2026-000252'),
+('GT-000016', 'DUPLICATE_INVOICE', 'invoice', 'INV-STU-000122-2026-001497', 'STU-000122', 'VOID_DUPLICATE', 15500000, 'second invoice for ENR-000122-2026-SPRING; the first is INV-STU-000122-2026-000120'),
+('GT-000017', 'DUPLICATE_INVOICE', 'invoice', 'INV-STU-000038-2026-001498', 'STU-000038', 'VOID_DUPLICATE', 6675000, 'second invoice for ENR-000038-2026-SPRING; the first is INV-STU-000038-2026-000036'),
+('GT-000018', 'DUPLICATE_INVOICE', 'invoice', 'INV-STU-000446-2026-001499', 'STU-000446', 'VOID_DUPLICATE', 2664000, 'second invoice for ENR-000446-2026-SUMMER; the first is INV-STU-000446-2026-000941'),
+('GT-000019', 'DUPLICATE_INVOICE', 'invoice', 'INV-STU-000500-2026-001500', 'STU-000500', 'VOID_DUPLICATE', 12675000, 'second invoice for ENR-000500-2026-SPRING; the first is INV-STU-000500-2026-000495'),
+('GT-000020', 'REFUND_EXCEEDS_NET_PAID', 'refund', 'REF-2026-000074', 'STU-000177', 'BLOCK_REFUND', 14520000, 'refund of 17152476 paise against a net paid amount of 14520000'),
+('GT-000021', 'REFUND_EXCEEDS_NET_PAID', 'refund', 'REF-2026-000075', 'STU-000433', 'BLOCK_REFUND', 7995225, 'refund of 9085774 paise against a net paid amount of 7995225'),
+('GT-000022', 'REFUND_EXCEEDS_NET_PAID', 'refund', 'REF-2026-000076', 'STU-000148', 'BLOCK_REFUND', 13032500, 'refund of 15104668 paise against a net paid amount of 13032500'),
+('GT-000023', 'REFUND_EXCEEDS_NET_PAID', 'refund', 'REF-2026-000077', 'STU-000220', 'BLOCK_REFUND', 17013600, 'refund of 19523106 paise against a net paid amount of 17013600'),
+('GT-000024', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000432', 'STU-000432', 'RECOMPUTE_BALANCE', 144464, 'stated balance 157464 paise, ledger sum 144464'),
+('GT-000025', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000011', 'STU-000011', 'RECOMPUTE_BALANCE', 3223200, 'stated balance 3221400 paise, ledger sum 3223200'),
+('GT-000026', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000405', 'STU-000405', 'RECOMPUTE_BALANCE', 4267517, 'stated balance 4270217 paise, ledger sum 4267517'),
+('GT-000027', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000094', 'STU-000094', 'RECOMPUTE_BALANCE', 189590, 'stated balance 175490 paise, ledger sum 189590'),
+('GT-000028', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000139', 'STU-000139', 'RECOMPUTE_BALANCE', 13990000, 'stated balance 13977600 paise, ledger sum 13990000'),
+('GT-000029', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000467', 'STU-000467', 'RECOMPUTE_BALANCE', 9325000, 'stated balance 9340100 paise, ledger sum 9325000'),
+('GT-000030', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000117', 'STU-000117', 'RECOMPUTE_BALANCE', 8090000, 'stated balance 8080200 paise, ledger sum 8090000'),
+('GT-000031', 'BALANCE_LEDGER_MISMATCH', 'student_balance', 'STU-000415', 'STU-000415', 'RECOMPUTE_BALANCE', 7150000, 'stated balance 7133900 paise, ledger sum 7150000');
+COMMIT;

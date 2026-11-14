@@ -4,6 +4,7 @@ from app.datagen import anomalies
 from app.datagen.plan import build_world
 from app.datagen.scale import SCALES, Scale
 from app.datagen.simulate import build_dataset
+from app.datagen.writer import ordered
 
 Dataset = dict[str, list[dict]]
 DEFAULT_SEED = 20261022
@@ -16,6 +17,7 @@ def generate(scale: str | Scale, seed: int = DEFAULT_SEED, inject: bool = True) 
     sc = SCALES[scale] if isinstance(scale, str) else scale
     ds = build_dataset(build_world(sc, seed), sc, seed)
     truth = anomalies.inject(ds, sc, seed) if inject else []
+    ds = {name: ordered(name, ds[name]) for name in schema.DATA_TABLES}     # primary-key order everywhere
     for name in schema.DATA_TABLES:           # a row must carry exactly the columns of its table
         cols = set(schema.columns(name))
         for row in ds[name][:1]:

@@ -1,0 +1,21 @@
+program_id,name,level,has_lab
+PRG-01,B.Tech Computer Science,UG,true
+PRG-02,B.Tech Mechanical Engineering,UG,true
+PRG-03,B.Tech Electronics,UG,true
+PRG-04,B.Sc Physics,UG,true
+PRG-05,B.Sc Chemistry,UG,true
+PRG-06,B.Sc Biotechnology,UG,true
+PRG-07,B.Com Accounting,UG,false
+PRG-08,BBA Management,UG,false
+PRG-09,BA Economics,UG,false
+PRG-10,BA Psychology,UG,false
+PRG-11,M.Tech Computer Science,PG,true
+PRG-12,MBA,PG,false
+PRG-13,M.Sc Data Science,PG,true
+PRG-14,M.Sc Physics,PG,true
+PRG-15,MA English,PG,false
+PRG-16,M.Com,PG,false
+PRG-17,Diploma Mechanical,DIPLOMA,true
+PRG-18,Diploma Electrical,DIPLOMA,true
+PRG-19,Diploma Information Technology,DIPLOMA,false
+PRG-20,Diploma Hospitality,DIPLOMA,false
