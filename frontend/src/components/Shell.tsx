@@ -1,10 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { LogOut, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import { get } from "../lib/api";
 import { useAuth, type Role } from "../lib/auth";
-import { inr, label } from "../lib/format";
+import { label } from "../lib/format";
 import { initMotion } from "../lib/motion";
 import { Logo, Toaster, TopBar } from "./ui";
 
@@ -20,6 +18,7 @@ const NAV: Item[] = [
   { to: "/fees", text: "Fee schedules", roles: FINANCE },
   { to: "/scholarships", text: "Scholarships", roles: FINANCE },
   { to: "/exceptions", text: "Exceptions", roles: ["SUPPORT", "PLATFORM_ADMIN"] },
+  { to: "/users", text: "Users", roles: ["PLATFORM_ADMIN"] },
   { to: "/quality", text: "Data quality", roles: ["PLATFORM_ADMIN"] },
 ];
 export const homeFor = (r: Role) => (r === "LEARNER" ? "/me" : r === "INSTRUCTOR" ? "/students" : "/");
@@ -38,21 +37,6 @@ function useTheme() {
 export function ThemeToggle() {
   const { dark, toggle } = useTheme();
   return <button className="vx-icon" onClick={toggle} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}>{dark ? <Sun size={16} /> : <Moon size={16} />}</button>;
-}
-
-/** The books at a glance, scrolling along the bottom edge; live figures for roles that may see money. */
-function Ticker({ role }: { role: Role }) {
-  const money = FINANCE.includes(role);
-  const q = useQuery({ queryKey: ["overview"], queryFn: () => get("/metrics/overview"), enabled: money, staleTime: 60_000 });
-  const d = q.data;
-  const items: [string, string][] = [
-    ["As of", "5 Sep 2026"], ["Money", "integer paise, round half up"], ["Ledger", "append only"],
-    ...(d ? ([["Net billed", inr(d.charged_paise + d.credits_paise)], ["Collected", inr(d.paid_paise - d.refunded_paise)],
-      ["Owed", inr(d.owed_paise)], ["Open exceptions", String(d.open_exceptions)]] as [string, string][]) : []),
-    ["Balance", "checked three ways"],
-  ];
-  const run = items.map(([k, v]) => <em key={k}><i>&#9670;</i>{k} <b>{v}</b></em>);
-  return <div className="vx-ticker" aria-hidden="true"><div className="vx-track"><span>{run}</span><span>{run}</span></div></div>;
 }
 
 export default function Shell() {
@@ -77,7 +61,6 @@ export default function Shell() {
         </div>
       </header>
       <main id="main" className="vx-wrap"><Outlet /></main>
-      <Ticker role={me.role} />
       <Toaster />
     </div>
   );

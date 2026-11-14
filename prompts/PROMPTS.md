@@ -151,6 +151,34 @@ print exports were added to every list and account; learners gained sign-up, enr
 checklist, self-service payment and withdrawal, their own awards, fees and statement, and a change-password form; staff can
 enrol a student. Nothing was pushed to the repository, as instructed.
 
+**P20**
+> who can change fee schedule add students enter data etc... / assign scholarship / still why there is no create etc.. acc / also invoice
+> etc... available na ? so where is download option ? / did u cover all Edge Cases / Negative Scenarios end to end? documented and listed
+> on an edge-case.md document? / learner and others also need some graphs pie and line graphs with nice colors and animations / remove this
+> bottom bar / is it possible to use some diff good color instead of orange / also i need permission matrix document as well
+
+*Result:* the bottom ticker was removed; staff screens for fee versions, adding students, editing profiles, assigning scholarships and
+managing users were added with the matching endpoints; invoices can be downloaded; line and donut charts were added to the overview,
+student, scholarship and exception pages; `docs/permissions.md` is generated from the route guards; `docs/edge-cases.md` and
+`tests/api/test_edge_cases.py` list and prove the negative scenarios.
+
+**P21**
+> make sure all validations are covered / here use this as favicons and icons
+
+*Result:* every write endpoint's field bounds were tested (EC-01 to EC-35), which found and fixed one real defect (a NUL character in text
+caused a 500, now a 422); the supplied artwork became the favicon, app icons and in-app logo.
+
+**P22**
+> nah change back to last orange colour pls
+
+*Result:* the accent returned to orange; chart colours were re-based on it.
+
+**P23**
+> whats the use of it when u only showing one thing on chart / what this chart says, ups and downs means what? what is points and numbers
+
+*Result:* the donut now shows ledger money by kind (several slices) and both charts carry a plain-language explanation, a zero line labelled
+"settled", coloured dots (red charge, green payment) and tooltips naming each entry; the line no longer smooths over values it did not have.
+
 ## Other tools
 
 No other AI tool was used. No prompts were sent to anything other than the assistant above.

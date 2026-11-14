@@ -44,3 +44,10 @@ migrated to head, and skip with a clear message if the cluster is not running.
 - No browser end-to-end tests; the pages were exercised by hand against the running API.
 - No load test beyond the full-scale data load (about 25 seconds for a million rows) and the query-count budget.
 - Mail delivery is not exercised in tests (it needs a real mail server); its skip, redirect and no-raise paths are short but untested.
+
+## Edge cases and validation
+
+`backend/tests/api/test_edge_cases.py` holds the EC-xx tests: every field of every write endpoint at and beyond its bounds, hostile text,
+malformed bodies and headers, idempotency conflicts, role sweeps. [`edge-cases.md`](edge-cases.md) lists each scenario, the expected
+answer, what enforces it and the test that proves it. [`permissions.md`](permissions.md) is generated from the route guards and checked
+for staleness by `tests/test_docs.py`.

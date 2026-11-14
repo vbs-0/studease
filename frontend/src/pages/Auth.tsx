@@ -50,7 +50,8 @@ export function Login() {
         </label>
         <Err error={m.error} />
         <button className="btn btn-solid" disabled={m.isPending}>{m.isPending && <Spinner />}Sign in</button>
-        <div className="flex flex-wrap justify-between gap-2 text-sm"><Link to="/forgot">Forgot your password?</Link><Link to="/signup">Create a learner account</Link></div>
+        <Link className="btn" to="/signup">Create a new account</Link>
+        <div className="text-center text-sm"><Link to="/forgot">Forgot your password?</Link></div>
       </form>
       <div className="mt-5 border-t border-rule pt-4">
         <p className="eyebrow mb-2">Demo accounts (one per role)</p>

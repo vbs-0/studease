@@ -37,10 +37,16 @@ def overview(conn: Conn):
                coalesce(sum(b.balance_paise), 0) AS balance_paise
         FROM program p LEFT JOIN student s USING (program_id) LEFT JOIN student_balance b USING (student_id)
         GROUP BY p.program_id ORDER BY p.program_id""")).mappings().all()
+    by_month = conn.execute(text("""
+        SELECT to_char(date_trunc('month', posted_on), 'YYYY-MM') AS month,
+               coalesce(sum(amount_paise) FILTER (WHERE entry_type IN ('CHARGE', 'LATE_FEE')), 0) AS charged_paise,
+               coalesce(-sum(amount_paise) FILTER (WHERE entry_type = 'PAYMENT'), 0) AS paid_paise,
+               coalesce(sum(amount_paise) FILTER (WHERE entry_type = 'REFUND'), 0) AS refunded_paise
+        FROM ledger_entry GROUP BY 1 ORDER BY 1""")).mappings().all()
     by_type = {r[0]: r[1] for r in conn.execute(text(
         "SELECT exception_type, count(*) FROM exception WHERE status = 'OPEN' GROUP BY exception_type"))}
     return {"as_of": AS_OF, **dict(one), "invoice_status": by_status, "open_by_type": by_type,
-            "by_term": [dict(r) for r in by_term], "by_program": [dict(r) for r in by_program]}
+            "by_month": [dict(r) for r in by_month], "by_term": [dict(r) for r in by_term], "by_program": [dict(r) for r in by_program]}
 
 
 @router.get("/quality", dependencies=[require_role("PLATFORM_ADMIN")])

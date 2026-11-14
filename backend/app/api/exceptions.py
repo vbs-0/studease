@@ -34,7 +34,9 @@ def list_exceptions(conn: Conn, page: Annotated[Page, Depends()],
         ORDER BY exception_id LIMIT :n"""),
         {"after": page.after, "st": status, "t": exception_type, "s": student_id, "n": page.limit + 1}).mappings().all()
     counts = {r[0]: r[1] for r in conn.execute(text("SELECT status, count(*) FROM exception GROUP BY status"))}
-    return {**page.wrap([dict(r) for r in rows], "exception_id"), "counts": counts}
+    types = {r[0]: r[1] for r in conn.execute(text(
+        "SELECT exception_type, count(*) FROM exception WHERE (CAST(:st AS text) IS NULL OR status = :st) GROUP BY 1 ORDER BY 2 DESC"), {"st": status})}
+    return {**page.wrap([dict(r) for r in rows], "exception_id"), "counts": counts, "types": types}
 
 
 @router.post("/exceptions/{exception_id}/resolve", dependencies=[require_role("SUPPORT")])

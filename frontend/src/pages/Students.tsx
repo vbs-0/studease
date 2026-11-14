@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Empty, ErrorBox, ExportMenu, Header, Loading, Money, More, toast } from "../components/ui";
 import { get } from "../lib/api";
 import { seesMoney, useAuth } from "../lib/auth";
@@ -41,6 +41,7 @@ export default function Students() {
   return (
     <>
       <Header title="Students" lead={money ? "Search by id, name or email. Balance is positive when the student owes money." : "Students of your program, with enrollment status."}>
+        {me && ["ACADEMIC_ADMIN", "SUPPORT", "PLATFORM_ADMIN"].includes(me.role) && <Link className="btn btn-solid" to="/students/new">Add student</Link>}
         <ExportMenu onCsv={exportCsv} busy={exporting} />
       </Header>
       <div className="no-print mb-5 flex flex-wrap gap-3">

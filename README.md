@@ -18,7 +18,27 @@ withdrawals, resolutions) by design; all data is synthetic.
 Start with [docs/walkthrough.md](docs/walkthrough.md) (one student followed end to end) or
 [docs/architecture.md](docs/architecture.md) (every rule, with its id).
 
+## Screens
+
+| | |
+|---|---|
+| ![Sign in](docs/screenshots/login.png) | ![Learner account](docs/screenshots/learner-account.png) |
+| Sign in, with a visible **Create a new account** button | Learner account: balance cards, money by kind, balance over time, pay now |
+| ![Overview](docs/screenshots/overview.png) | ![Student](docs/screenshots/student-detail.png) |
+| Overview for staff: monthly line chart, status donut, term bars | Student page for an academic admin: edit details, assign scholarship, invoice downloads |
+| ![Fee schedules](docs/screenshots/fee-schedules.png) | ![Users](docs/screenshots/users.png) |
+| Fee schedules with **Publish a new fee version** | Platform admin: create and disable accounts |
+| ![Scholarships](docs/screenshots/scholarships.png) | ![Exceptions](docs/screenshots/exceptions.png) |
+| Awards by scheme (count and money) | Exception queue with a by-type donut |
+| ![Add student](docs/screenshots/add-student.png) | ![Dark mode](docs/screenshots/overview-dark.png) |
+| Staff data entry | Dark theme |
+
+Also in `docs/screenshots/`: `learner-enroll.png`, `students.png`, `data-quality.png`.
+
 ## Quick start
+
+**Windows, one step:** run [`run.bat`](run.bat). It checks the tools, installs, starts the database, loads the data and opens the app
+(details and troubleshooting in [SETUP.md](SETUP.md)). Or follow the manual steps below.
 
 Prerequisites: Python 3.12+, [uv](https://docs.astral.sh/uv/), Node 20+, PostgreSQL 14+ (the client and server
 binaries; the project creates its own throwaway cluster, it never touches an existing one).
@@ -108,7 +128,7 @@ an input table; a test fails if a leak word appears in any input table.
   you do not meet), pay, withdraw, see awards and fees, export a statement, change your password. Staff can enrol a student through the same code.
 - **Export everywhere:** CSV (spreadsheet-safe: UTF-8 BOM, formula neutralisation), JSON and Print / PDF on every list and account; lists export
   the whole filtered set, not the visible page.
-- **A designed interface, not a template:** cut-corner and folder-tab cards, wavy navigation, a live ticker, pill buttons, scroll and pointer
+- **A designed interface, not a template:** cut-corner and folder-tab cards, wavy navigation, pill buttons, scroll and pointer
   motion, charts that draw in, skeleton cards with the real shapes while data loads, a top progress bar, a splash, toasts, light and dark themes
   ([docs/frontend.md](docs/frontend.md)).
 - **Safe writes:** a payment is idempotent (`Idempotency-Key`, scoped to the caller), takes a row lock on the student and
@@ -119,7 +139,7 @@ an input table; a test fails if a leak word appears in any input table.
 - **A real error experience:** the app has its own 404, 403 and crash pages (route error boundary); the API always
   answers with a JSON error envelope and an `X-Request-ID`; nginx serves a static page ([frontend/public/50x.html](frontend/public/50x.html))
   when the API is down; an expired session returns you to sign-in.
-- **Polish:** per-page titles and meta descriptions, Open Graph tags, an SVG favicon and web manifest, `robots.txt`,
+- **Polish:** per-page titles and meta descriptions, Open Graph tags, a hand-drawn favicon and app icons, a web manifest, `robots.txt`,
   light and dark themes, keyboard focus styles and a skip link, reduced-motion support, mobile layout (360 px and up).
 - **Deployment as code:** [deploy/](deploy) holds the nginx config, the systemd unit and a script with health check and
   one-command rollback; CI runs lint, tests, the docs-freshness check, the reproducibility check and the hygiene scan.
@@ -168,6 +188,9 @@ account of what was generated, what I changed and how I checked it are in [promp
 | [docs/decisions.md](docs/decisions.md) | the choices that could have gone another way, and the reasons |
 | [docs/testing.md](docs/testing.md) | the test strategy and what each group proves |
 | [docs/frontend.md](docs/frontend.md) | the design system, motion, loading states, pages by role, exports, error pages, accessibility |
+| [SETUP.md](SETUP.md) | install, run, settings, checks and troubleshooting; `run.bat` does it in one step |
+| [docs/permissions.md](docs/permissions.md) | the role-by-route permission matrix, generated from the route guards |
+| [docs/edge-cases.md](docs/edge-cases.md) | every edge case and negative scenario, what enforces it, the test that proves it |
 | [docs/deploy.md](docs/deploy.md) | production setup, deploy, rollback, mail, operations |
 | [docs/walkthrough.md](docs/walkthrough.md) | one student, every record, generated from the data |
 | [docs/data_dictionary.md](docs/data_dictionary.md), [docs/erd.md](docs/erd.md) | generated from the schema |

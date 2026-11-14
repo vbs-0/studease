@@ -19,7 +19,7 @@ SKIP_SUFFIXES = {".csv", ".gz", ".png", ".jpg", ".woff2", ".lock", ".sql", ".jso
 SKIP_FILES = {"scrub_check.py", "test_scrub_check.py", "package-lock.json"}
 
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
-ALLOWED_EMAIL_DOMAINS = {"example.edu", "example.com", "example.org"}
+ALLOWED_EMAIL_DOMAINS = {"example.edu", "example.com", "example.org", "mail.test"}
 IPV4 = re.compile(r"(?<![\d.])(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})(?![\d.])")
 LOCAL_PATH = re.compile(r"(?:[A-Za-z]:\\Users\\|/Users/[A-Za-z]|/home/[a-z][a-z0-9_-]+/)")
 PRIVATE_KEY = re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")

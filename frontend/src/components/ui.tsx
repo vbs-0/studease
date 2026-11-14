@@ -6,14 +6,7 @@ import { ApiError } from "../lib/api";
 import { inr, label, tone } from "../lib/format";
 
 export function Logo({ size = 30 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label="StudEase">
-      <rect width="64" height="64" rx="14" fill="currentColor" />
-      <path d="M14 20h36M14 32h36M14 44h24" stroke="var(--paper)" strokeWidth="3" strokeLinecap="round" />
-      <path d="M10 14v36" stroke="#d63a12" strokeWidth="3" strokeLinecap="round" />
-      <path d="M20 50 52 14" stroke="#f75708" strokeWidth="5" strokeLinecap="round" />
-    </svg>
-  );
+  return <img src="/logo.png" width={size} height={size} alt="StudEase" style={{ display: "block", objectFit: "contain" }} />;
 }
 
 export function Stamp({ status }: { status: string }) {
@@ -81,7 +74,7 @@ export function PageLoading({ labels = ["Students", "Billed", "Collected", "Owed
 
 export function Spinner() { return <span className="spinner" aria-hidden="true" />; }
 
-/** A thin orange bar at the top of the window while any request is running. */
+/** A thin accent bar at the top of the window while any request is running. */
 export function TopBar() {
   const busy = useIsFetching() + useIsMutating() > 0;
   const [on, setOn] = useState(false);
@@ -134,20 +127,20 @@ export function PillBar({ text, value, max, display, red }: { text: string; valu
   );
 }
 
-const PALETTE = ["var(--orange)", "var(--ink)", "#c9c0ab", "var(--green)", "var(--red)", "#7a766a"];
+export const PALETTE = ["#f75708", "#1f9d6b", "#ffb020", "#7b5cff", "#d63a12", "#8d99ae"];
 
-export function Donut({ slices, centre, sub }: { slices: { label: string; value: number }[]; centre: ReactNode; sub: string }) {
+export function Donut({ slices, centre, sub, format = (n) => String(n) }: { slices: { label: string; value: number }[]; centre: ReactNode; sub: string; format?: (n: number) => string }) {
   const total = slices.reduce((n, s) => n + s.value, 0) || 1;
   const r = 70, c = 2 * Math.PI * r;
   let offset = 0;
   return (
     <div className="flex flex-wrap items-center gap-6">
-      <svg viewBox="0 0 200 200" width="200" height="200" role="img" aria-label={`${sub}: ${slices.map((s) => `${label(s.label)} ${s.value}`).join(", ")}`}>
+      <svg viewBox="0 0 200 200" width="200" height="200" role="img" aria-label={`${sub}: ${slices.map((s) => `${label(s.label)} ${format(s.value)}`).join(", ")}`}>
         <g transform="rotate(-90 100 100)">
           {slices.map((s, i) => {
             const len = (s.value / total) * c;
             const el = <circle key={s.label} className="donut-slice" cx="100" cy="100" r={r} strokeWidth="14" stroke={PALETTE[i % PALETTE.length]}
-              strokeDasharray={`${Math.max(0, len - 2)} ${c}`} strokeDashoffset={-offset} style={{ animationDelay: `${i * 120}ms` }}><title>{label(s.label)}: {s.value}</title></circle>;
+              strokeDasharray={`${Math.max(0, len - 2)} ${c}`} strokeDashoffset={-offset} style={{ animationDelay: `${i * 120}ms` }}><title>{label(s.label)}: {format(s.value)}</title></circle>;
             offset += len;
             return el;
           })}
@@ -156,7 +149,7 @@ export function Donut({ slices, centre, sub }: { slices: { label: string; value:
         <text x="100" y="126" textAnchor="middle" fontSize="11" fill="var(--muted)" letterSpacing="1.5">{sub.toUpperCase()}</text>
       </svg>
       <div className="legend flex-col !flex-nowrap">
-        {slices.map((s, i) => <span key={s.label}><i style={{ background: PALETTE[i % PALETTE.length] }} />{label(s.label)} <b className="text-ink">{s.value}</b></span>)}
+        {slices.map((s, i) => <span key={s.label}><i style={{ background: PALETTE[i % PALETTE.length] }} />{label(s.label)} <b className="text-ink">{format(s.value)}</b></span>)}
       </div>
     </div>
   );

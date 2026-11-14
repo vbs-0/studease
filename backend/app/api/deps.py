@@ -46,6 +46,7 @@ def require_role(*roles: str):
         if user.role not in roles:
             raise ApiError(403, "FORBIDDEN", "Your role cannot do this.")
         return user
+    check.roles = roles                     # read by docs_gen to build the permission matrix
     return Depends(check)
 
 

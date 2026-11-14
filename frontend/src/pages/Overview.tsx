@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Donut, ErrorBox, ExportMenu, Header, Metric, PageLoading, PillBar, TrendBars } from "../components/ui";
 import { get } from "../lib/api";
+import { LineChart } from "../components/charts";
 import { downloadCsv, downloadJson } from "../lib/export";
 import { inr, label } from "../lib/format";
 import { usePage } from "../lib/page";
@@ -29,6 +30,11 @@ export default function Overview() {
         <Metric kind="ink" title="Owed by students" value={inr(d.owed_paise)} note={`${inr(d.credit_held_paise)} held as credit`} />
         <Metric kind="mint" title="Open exceptions" value={d.open_exceptions} note="Awaiting review" to="/exceptions" />
       </div>
+      <section className="panel mt-6"><h2>Charged and collected by month</h2>
+        <LineChart name="Monthly billing and collection" labels={d.by_month.map((m: any) => m.month)} format={(n) => `${(n / 1e7).toFixed(1)} Cr`}
+          series={[{ name: "Charged", color: "#f75708", values: d.by_month.map((m: any) => m.charged_paise) }, { name: "Collected", color: "#1f9d6b", values: d.by_month.map((m: any) => m.paid_paise) },
+            { name: "Refunded", color: "#d63a12", values: d.by_month.map((m: any) => m.refunded_paise) }]} />
+      </section>
       <div className="two-col mt-6">
         <section className="panel"><h2>Invoices by status</h2>
           <Donut slices={slices} centre={d.invoices.toLocaleString("en-IN")} sub="invoices" />

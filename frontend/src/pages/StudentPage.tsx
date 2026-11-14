@@ -1,12 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Download } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useParams } from "react-router";
-import { Empty, ErrorBox, ExportMenu, Header, Loading, Metric, Money, PageLoading, Spinner, Stamp, toast } from "../components/ui";
+import { LineChart } from "../components/charts";
+import { AssignScholarship, ProfileForm } from "./Admin";
+import { Donut, Empty, ErrorBox, ExportMenu, Header, Loading, Metric, Money, PageLoading, Spinner, Stamp, toast } from "../components/ui";
 import { get, post } from "../lib/api";
 import { useAuth } from "../lib/auth";
-import { downloadCsv, downloadJson } from "../lib/export";
+import { downloadCsv, downloadInvoice, downloadJson } from "../lib/export";
 import { inr, label, shortDate } from "../lib/format";
 import { usePage } from "../lib/page";
+
+const KINDS: [string, string[]][] = [["Charged", ["CHARGE", "LATE_FEE"]], ["Paid", ["PAYMENT"]], ["Awards and waivers", ["SCHOLARSHIP", "WAIVER"]], ["Refunded", ["REFUND"]], ["Adjustments", ["ADJUSTMENT"]]];
 
 export function MyAccount() {
   const { me } = useAuth();
@@ -128,15 +133,35 @@ export function StudentPage({ id }: { id: string }) {
             <Metric kind="ink" title="Paid" value={inr(-b.paid_paise)} note={`${inr(b.refunded_paise)} refunded`} />
             <Metric kind="mint" title="Invoices" value={d.invoices.length} note={`${d.invoices.filter((i: any) => i.status === "OVERDUE").length} overdue`} />
           </div>)}
+        {b && (
+          <div className="two-col">
+            <section className="panel"><h2>Money by kind</h2>
+              {ledger.isPending ? <Loading rows={3} /> : (
+                <Donut format={(n) => inr(n)} centre={String(ledger.data?.items.length ?? 0)} sub="entries"
+                  slices={KINDS.map(([name, types]) => ({ label: name, value: Math.abs((ledger.data?.items ?? []).filter((e: any) => types.includes(e.entry_type)).reduce((n: number, e: any) => n + e.amount_paise, 0)) })).filter((x) => x.value > 0)} />)}
+              <p className="note">Each slice adds up the ledger entries of one kind: fees charged to you, payments you made, awards and waivers that reduced the bill, and refunds paid back.</p>
+            </section>
+            <section className="panel"><h2>Balance over time</h2>
+              <p className="note m-0">Each dot is one ledger entry. The line climbs when a fee is charged (red dot) and drops when you pay or receive an award (green dot). Above the faint zero line you owe money; below it you hold credit. Hover a dot for the entry.</p>
+              {ledger.isPending ? <Loading rows={3} /> : ledger.data && ledger.data.items.length > 1 ? (
+                <LineChart name="Running balance" labels={ledger.data.items.map((e: any) => shortDate(e.posted_on))} format={(n) => inr(n).replace(/\.00$/, "")}
+                  series={[{ name: "Balance you owe", color: "#f75708", values: ledger.data.items.map((e: any) => e.running_balance_paise) }]}
+                  dotColor={(i) => (ledger.data.items[i].amount_paise > 0 ? "#d63a12" : "#1f9d6b")}
+                  tips={ledger.data.items.map((e: any) => `${shortDate(e.posted_on)}: ${label(e.entry_type)} ${inr(e.amount_paise, { signed: true })}, balance ${inr(e.running_balance_paise)}`)} />) : <p className="note">The chart appears after the first few ledger entries.</p>}
+            </section>
+          </div>)}
         {b && <Balance b={b} />}
+        {role !== "INSTRUCTOR" && <ProfileForm key={s.full_name + s.gpa + s.income_band + String(s.hostel_resident)} student={s} own={own} done={refresh} />}
+        {(role === "ACADEMIC_ADMIN" || role === "PLATFORM_ADMIN") && <AssignScholarship studentId={id} done={refresh}
+          terms={d.enrollments.filter((e: any) => e.status === "ENROLLED").map((e: any) => ({ term_id: e.term_id, label: label(e.term_name) }))} />}
         {own && <div className="no-print flex flex-wrap gap-3"><Link className="btn btn-solid" to="/me/enroll">Enrol in a term</Link><Link className="btn" to="/me/scholarships">My scholarships</Link><Link className="btn" to="/me/fees">Fee schedule</Link></div>}
         {(own || role === "SUPPORT" || role === "PLATFORM_ADMIN") && <PaymentForm studentId={id} own={own} done={refresh} />}
         <Enrollments rows={d.enrollments} canWithdraw={own || role === "ACADEMIC_ADMIN" || role === "PLATFORM_ADMIN"} own={own} done={refresh} />
         {d.invoices && (
           <section className="panel"><h2>Invoices</h2>
             {d.invoices.length === 0 ? <p className="note">No invoices yet.</p> : (
-              <div className="scroll-x"><table className="register mt-2"><thead><tr><th>Invoice</th><th>Issued</th><th>Due</th><th>Status</th><th className="num">Total</th></tr></thead><tbody>
-                {d.invoices.map((i: any) => <tr key={i.invoice_id}><td><Link to={`/invoices/${i.invoice_id}`}>{i.invoice_id}</Link></td><td>{shortDate(i.issue_date)}</td><td>{shortDate(i.due_date)}</td><td><Stamp status={i.status} /></td><td><Money paise={i.total_paise} /></td></tr>)}
+              <div className="scroll-x"><table className="register mt-2"><thead><tr><th>Invoice</th><th>Issued</th><th>Due</th><th>Status</th><th className="num">Total</th><th /></tr></thead><tbody>
+                {d.invoices.map((i: any) => <tr key={i.invoice_id}><td><Link to={`/invoices/${i.invoice_id}`}>{i.invoice_id}</Link></td><td>{shortDate(i.issue_date)}</td><td>{shortDate(i.due_date)}</td><td><Stamp status={i.status} /></td><td><Money paise={i.total_paise} /></td><td className="text-right no-print"><button className="btn" aria-label={`Download ${i.invoice_id}`} onClick={() => downloadInvoice(i.invoice_id).catch((e) => toast(e.message))}><Download size={15} aria-hidden />Download</button></td></tr>)}
               </tbody></table></div>)}
           </section>)}
         {money && (

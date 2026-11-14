@@ -123,7 +123,7 @@ def lint() -> None:
 
 
 def api() -> None:
-    run(["uv", "run", "uvicorn", "app.main:create_app", "--factory", "--reload", "--port", "8000"], cwd=BACKEND)
+    run(["uv", "run", "uvicorn", "app.main:app", "--reload", "--port", "8000"], cwd=BACKEND)
 
 
 def web() -> None:

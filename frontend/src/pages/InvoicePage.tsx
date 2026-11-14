@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router";
-import { ErrorBox, ExportMenu, Header, Money, PageLoading, Stamp } from "../components/ui";
-import { downloadCsv } from "../lib/export";
+import { ErrorBox, ExportMenu, Header, Money, PageLoading, Stamp, toast } from "../components/ui";
+import { downloadInvoice, downloadJson } from "../lib/export";
 import { get } from "../lib/api";
 import { label, shortDate } from "../lib/format";
 import { usePage } from "../lib/page";
@@ -16,9 +16,7 @@ export default function InvoicePage() {
   return (
     <>
       <Header title="Invoice" lead={inv.invoice_id}><Stamp status={inv.status} />
-        <ExportMenu onCsv={() => downloadCsv(inv.invoice_id, lines, [{ header: "Line", value: (l: any) => l.line_no }, { header: "Type", value: (l: any) => l.line_type },
-          { header: "Description", value: (l: any) => l.description }, { header: "Amount (paise)", value: (l: any) => l.amount_paise },
-          { header: "Allocated (paise)", value: (l: any) => l.allocated_paise }, { header: "Outstanding (paise)", value: (l: any) => l.outstanding_paise }])} /></Header>
+        <ExportMenu onCsv={() => downloadInvoice(inv.invoice_id).catch((e) => toast(e.message))} onJson={() => downloadJson(inv.invoice_id, q.data)} /></Header>
       <p className="text-muted">Student <Link to={`/students/${inv.student_id}`}>{inv.student_id}</Link> · issued {shortDate(inv.issue_date)} · due {shortDate(inv.due_date)}</p>
       <section className="panel"><div className="scroll-x"><table className="register"><thead><tr><th>#</th><th>Type</th><th>Description</th><th className="num">Amount</th><th className="num">Paid</th><th className="num">Outstanding</th></tr></thead><tbody>
         {lines.map((l: any) => (

@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router";
-import { Empty, ErrorBox, ExportMenu, Header, Loading, Money, More, Spinner, Stamp, toast } from "../components/ui";
+import { Donut, Empty, ErrorBox, ExportMenu, Header, Loading, Money, More, Spinner, Stamp, toast } from "../components/ui";
 import { downloadCsv, fetchAll } from "../lib/export";
 import { get, post } from "../lib/api";
 import { useAuth } from "../lib/auth";
@@ -51,6 +51,7 @@ export default function Exceptions() {
         <select className="field max-w-xs" aria-label="Type" value={type} onChange={(e) => setType(e.target.value)}>
           <option value="">All types</option>{TYPES.map((t) => <option key={t} value={t}>{label(t)}</option>)}</select>
       </div>
+      {Object.keys(q.data?.pages[0]?.types ?? {}).length > 0 && <section className="panel mb-5"><h2>By type</h2><Donut slices={Object.entries(q.data!.pages[0].types).map(([t, n]: any) => ({ label: t, value: n }))} centre={String(Object.values(q.data!.pages[0].types).reduce((a: any, b: any) => a + b, 0))} sub={label(status)} /></section>}
       {q.isPending ? <Loading rows={6} /> : q.isError ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : rows.length === 0 ? <Empty>Nothing here.</Empty> : (
         <div className="panel scroll-x"><table className="register"><thead><tr><th>Case</th><th>Type</th><th>Student</th><th className="num">Expected</th><th className="num">Found</th><th>Suggested</th><th>Status</th><th /></tr></thead><tbody>
           {rows.map((e: any) => (

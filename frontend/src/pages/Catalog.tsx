@@ -5,12 +5,17 @@ import { Empty, ErrorBox, ExportMenu, Header, Loading, Money, More, Stamp, toast
 import { downloadCsv, fetchAll } from "../lib/export";
 import { get } from "../lib/api";
 import { label, shortDate } from "../lib/format";
+import { useAuth } from "../lib/auth";
+import { NewFeeForm } from "./Admin";
+import { Donut } from "../components/ui";
+import { inr } from "../lib/format";
 import { usePage } from "../lib/page";
 
 export function Fees() {
   usePage("Fee schedules", "Fee schedules by program and term: tuition, lab, hostel and other fees, with versions and dates.");
   const programs = useQuery({ queryKey: ["programs"], queryFn: () => get("/programs") });
   const terms = useQuery({ queryKey: ["terms"], queryFn: () => get("/terms") });
+  const { me } = useAuth();
   const [program, setProgram] = useState("PRG-01");
   const [term, setTerm] = useState("TERM-2026-FALL");
   const fees = useQuery({ queryKey: ["fees", program, term], queryFn: () => get("/fee-schedules", { program_id: program, term_id: term }) });
@@ -28,6 +33,7 @@ export function Fees() {
         <select className="field max-w-[12rem]" aria-label="Term" value={term} onChange={(e) => setTerm(e.target.value)}>
           {terms.data?.items.map((t: any) => <option key={t.term_id} value={t.term_id}>{label(t.term_name)} {t.year}</option>)}</select>
       </div>
+      {me && ["ACADEMIC_ADMIN", "PLATFORM_ADMIN"].includes(me.role) && <NewFeeForm program={program} term={term} />}
       {fees.isPending ? <Loading /> : fees.isError ? <ErrorBox error={fees.error} /> : fees.data.items.length === 0 ? <Empty>No fees for this program and term.</Empty> : (
         <div className="panel scroll-x"><table className="register"><thead><tr><th>Fee</th><th>Applies to</th><th className="num">Amount</th><th className="num">Version</th><th>From</th><th>To</th><th>Scholarship</th></tr></thead><tbody>
           {fees.data.items.map((f: any) => <tr key={f.fee_schedule_id}><td>{label(f.fee_type)}</td><td>{label(f.applies_to)}</td><td><Money paise={f.amount_paise} /></td><td className="num">{f.version}</td><td>{shortDate(f.effective_from)}</td><td>{shortDate(f.effective_to)}</td><td>{f.scholarship_eligible ? "Eligible" : "No"}</td></tr>)}
@@ -39,6 +45,7 @@ export function Fees() {
 export function Scholarships() {
   usePage("Scholarships", "Scholarship schemes, awards and eligibility decisions with their reasons.");
   const schemes = useQuery({ queryKey: ["schemes"], queryFn: () => get("/scholarship-schemes") });
+  const summary = useQuery({ queryKey: ["scholarship-summary"], queryFn: () => get("/scholarships/summary") });
   const [scheme, setScheme] = useState("");
   const [exporting, setExporting] = useState(false);
   const awards = useInfiniteQuery({
@@ -61,6 +68,16 @@ export function Scholarships() {
           } finally { setExporting(false); }
         }} />
       </Header>
+      <div className="two-col mb-6">
+        <section className="panel"><h2>Awards by scheme</h2>
+          {summary.isPending ? <Loading rows={3} /> : summary.isError ? <ErrorBox error={summary.error} /> : (
+            <Donut slices={summary.data.items.filter((i: any) => i.awards > 0).map((i: any) => ({ label: i.name, value: i.awards }))} centre={summary.data.items.reduce((n: number, i: any) => n + i.awards, 0).toLocaleString("en-IN")} sub="awards" />)}
+        </section>
+        <section className="panel"><h2>Money awarded by scheme</h2>
+          {summary.isPending ? <Loading rows={3} /> : summary.isError ? <ErrorBox error={summary.error} /> : (
+            <Donut format={(n) => inr(n)} slices={summary.data.items.filter((i: any) => i.awarded_paise > 0).map((i: any) => ({ label: i.name, value: i.awarded_paise }))} centre={`${(summary.data.items.reduce((n: number, i: any) => n + i.awarded_paise, 0) / 1e7).toFixed(1)}Cr`} sub="awarded" />)}
+        </section>
+      </div>
       <section className="panel mb-6"><h2>Schemes</h2>
         {schemes.isPending ? <Loading /> : schemes.isError ? <ErrorBox error={schemes.error} /> : (
           <div className="scroll-x"><table className="register mt-2"><thead><tr><th>Priority</th><th>Scheme</th><th className="num">Min GPA</th><th>Income band</th><th>Award</th></tr></thead><tbody>

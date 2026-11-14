@@ -6,6 +6,7 @@ import { ApiError } from "./lib/api";
 import { AuthProvider, useAuth, type Role } from "./lib/auth";
 import { Fees, Scholarships } from "./pages/Catalog";
 import { Forbidden, NotFound, RouteError } from "./pages/ErrorPages";
+import { AddStudent, Users } from "./pages/Admin";
 import Exceptions from "./pages/Exceptions";
 import { Forgot, Login, Reset, Signup } from "./pages/Auth";
 import { Enroll, MyFees, MyScholarships } from "./pages/Learner";
@@ -50,11 +51,12 @@ const router = createBrowserRouter([
         { path: "/me", element: <Guard roles={["LEARNER"]} />, children: [
           { index: true, element: <MyAccount /> }, { path: "enroll", element: <Enroll /> },
           { path: "scholarships", element: <MyScholarships /> }, { path: "fees", element: <MyFees /> }] },
-        { path: "/students", element: <Guard roles={["INSTRUCTOR", ...FINANCE]} />, children: [{ index: true, element: <Students /> }, { path: ":id", element: <StudentRoute /> }] },
+        { path: "/students", element: <Guard roles={["INSTRUCTOR", ...FINANCE]} />, children: [{ index: true, element: <Students /> }, { path: "new", element: <Guard roles={FINANCE} />, children: [{ index: true, element: <AddStudent /> }] }, { path: ":id", element: <StudentRoute /> }] },
         { path: "/invoices/:id", element: <Guard roles={["LEARNER", ...FINANCE]} />, children: [{ index: true, element: <InvoicePage /> }] },
         { path: "/fees", element: <Guard roles={FINANCE} />, children: [{ index: true, element: <Fees /> }] },
         { path: "/scholarships", element: <Guard roles={FINANCE} />, children: [{ index: true, element: <Scholarships /> }] },
         { path: "/exceptions", element: <Guard roles={["SUPPORT", "PLATFORM_ADMIN"]} />, children: [{ index: true, element: <Exceptions /> }] },
+        { path: "/users", element: <Guard roles={["PLATFORM_ADMIN"]} />, children: [{ index: true, element: <Users /> }] },
         { path: "/quality", element: <Guard roles={["PLATFORM_ADMIN"]} />, children: [{ index: true, element: <Quality /> }] },
       ],
     }],

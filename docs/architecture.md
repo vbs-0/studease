@@ -523,3 +523,18 @@ and a mail failure is logged and never fails the request.
   the as-of day. Carried credit from an earlier payment is not auto-applied to a new invoice by this path (a known limit).
 - **Ownership:** every `/me` route takes the student from the token; withdrawing someone else's enrolment answers 404, the same
   as a missing one; staff routes cannot be called by a learner (403); learners may pay only by UPI, card or net banking.
+
+## Addendum: staff data entry and user administration
+
+| Endpoint | Roles | Purpose |
+|---|---|---|
+| POST `/fee-schedules` | academic admin, platform admin | new fee version; closes the previous one the day before; refuses dates before the current version |
+| POST `/students` | academic admin, support, platform admin | add a student, optionally with a learner login |
+| POST `/students/{id}/profile` | same | edit any profile field |
+| POST `/me/profile` | learner | edit own name and housing only |
+| POST `/students/{id}/scholarships` | academic admin, platform admin | assign an award; criteria enforced; the invoice and ledger are adjusted in the same transaction |
+| GET, POST `/admin/users`, POST `/admin/users/{id}/enabled` | platform admin | list, create, enable or disable logins (never your own) |
+| GET `/scholarships/summary` | finance roles | awards and money per scheme (charts) |
+
+`/metrics/overview` also returns `by_month` (charged, paid, refunded per month) and `/exceptions` returns per-type counts, for the line and
+donut charts. See [`permissions.md`](permissions.md) for the full generated role matrix and [`edge-cases.md`](edge-cases.md) for negative scenarios.

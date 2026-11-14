@@ -36,6 +36,9 @@ def install(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def _unhandled(request: Request, exc: Exception):
+        # a NUL character in text is valid JSON but cannot be stored; it is the caller's mistake, not a server fault
+        if "NUL" in str(exc) or "0x00" in str(exc):
+            return envelope(request, 422, "VALIDATION", "Text must not contain control characters.")
         applog.event(level="error", msg="unhandled", error=type(exc).__name__, path=request.url.path,
                      request_id=getattr(request.state, "request_id", "-"))
         return envelope(request, 500, "INTERNAL", "Something went wrong. Quote the request id when reporting it.")

@@ -38,6 +38,15 @@ def schemes(conn: Conn):
         "SELECT * FROM scholarship_scheme ORDER BY priority")).mappings()]}
 
 
+@router.get("/scholarships/summary")
+def scholarship_summary(conn: Conn):
+    rows = conn.execute(text("""SELECT c.scheme_code, c.name, count(s.scholarship_id) AS awards,
+                                       coalesce(sum(s.amount_paise), 0) AS awarded_paise
+                                FROM scholarship_scheme c LEFT JOIN scholarship s USING (scheme_code)
+                                GROUP BY c.scheme_code, c.name, c.priority ORDER BY c.priority""")).mappings().all()
+    return {"items": [dict(r) for r in rows]}
+
+
 @router.get("/scholarships")
 def scholarships(conn: Conn, page: Annotated[Page, Depends()], student_id: Opt = None, scheme_code: Opt = None,
                  status: Opt = None):

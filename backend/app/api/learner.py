@@ -37,6 +37,19 @@ class Enroll(BaseModel):
     applications: list[Scheme] = Field(default_factory=list, max_length=5)
 
 
+def new_student(conn: Connection, counters, f: dict) -> str:
+    """Insert one student and an empty balance row; returns the new id. The student record carries a reserved
+    @example.edu address (the data rule); a login, if any, keeps the address the person typed."""
+    sid = ids.student_id(counters.take("student"))
+    txn.insert_row(conn, "student", {
+        "student_id": sid, "program_id": f["program_id"], "full_name": f["full_name"].strip(), "email": f"{sid.lower()}@example.edu",
+        "residency": f["residency"], "gpa": round(f["gpa"], 2), "income_band": f["income_band"], "sports_quota": f["sports_quota"],
+        "hostel_resident": f["hostel_resident"], "waiver_type": f.get("waiver_type"), "admitted_on": AS_OF})
+    conn.execute(text("INSERT INTO student_balance (student_id, charged_paise, credits_paise, paid_paise, refunded_paise,"
+                      " balance_paise, as_of) VALUES (:s, 0, 0, 0, 0, 0, :d)"), {"s": sid, "d": AS_OF})
+    return sid
+
+
 def create_account(conn: Connection, body: Signup) -> dict:
     """A new synthetic student plus a learner login, in one transaction. The student's own record carries a
     reserved @example.edu address (the data rule); the login keeps the address the person typed."""
@@ -45,14 +58,7 @@ def create_account(conn: Connection, body: Signup) -> dict:
     counters = txn.begin_write(conn)
     if conn.execute(text("SELECT 1 FROM app_user WHERE lower(email) = :e"), {"e": body.email.lower()}).first():
         raise ApiError(409, "EMAIL_TAKEN", "That email already has an account. Sign in instead.")
-    sid = ids.student_id(counters.take("student"))
-    txn.insert_row(conn, "student", {
-        "student_id": sid, "program_id": body.program_id, "full_name": body.full_name.strip(),
-        "email": f"{sid.lower()}@example.edu", "residency": body.residency, "gpa": round(body.gpa, 2),
-        "income_band": body.income_band, "sports_quota": body.sports_quota, "hostel_resident": body.hostel_resident,
-        "waiver_type": None, "admitted_on": AS_OF})
-    conn.execute(text("INSERT INTO student_balance (student_id, charged_paise, credits_paise, paid_paise, refunded_paise,"
-                      " balance_paise, as_of) VALUES (:s, 0, 0, 0, 0, 0, :d)"), {"s": sid, "d": AS_OF})
+    sid = new_student(conn, counters, {**body.model_dump(exclude={"email", "password"}), "waiver_type": None})
     user = {"app_user_id": ids.user_id(counters.take("user")), "email": body.email.strip(), "role": "LEARNER",
             "student_id": sid, "program_id": None, "enabled": True, "created_at": datetime.now(UTC),
             "password_hash": security.hash_password(body.password)}

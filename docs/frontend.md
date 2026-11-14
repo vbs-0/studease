@@ -20,7 +20,7 @@ mint, a light serif for display type (Instrument Serif) over a neutral sans (Han
 | **Pill button** | every action | 12 px radius; an orange fill slides in from the left on hover; presses down on click |
 | **Stamp** | statuses | outlined capsule, tinted by meaning (green, amber, red, grey) |
 | **Strike** | figures that do not agree | a hand-drawn orange line draws across the wrong number (the three-way balance on a student page) |
-| **Ticker** | bottom edge | scrolling live figures for roles that may see money; pauses on hover |
+| **Line and donut charts** | overview, student page, scholarships, exceptions | lines draw themselves in, areas fade in, dots grow on hover and carry the entry as a tooltip; donuts draw slice by slice with an in-card explanation |
 | **Wavy nav underline** | header links | an animated sine wave under the active link |
 
 Colours are tokens (`--paper`, `--ink`, `--orange`, ...) defined for light, for dark, and for "dark by OS unless the user
@@ -90,7 +90,7 @@ browser's print dialog, with a print stylesheet that drops navigation, animation
 ## Accessibility
 
 Skip link; visible focus ring (orange) on every control; labels on every input; status messages use `role="status"`,
-errors `role="alert"`; the donut and bar charts carry text alternatives; the ticker is `aria-hidden` (its figures are on
+errors `role="alert"`; the donut and bar charts carry text alternatives; the decorative progress bar is `aria-hidden` (its figures are on
 the page); tables scroll horizontally on small screens; layout holds from 360 px upward.
 
 ## State and data access
@@ -99,3 +99,19 @@ TanStack Query caches responses for 30 seconds; writes invalidate exactly the ke
 overview). The API client ([lib/api.ts](../frontend/src/lib/api.ts)) is one fetch wrapper: bearer token from
 `sessionStorage`, JSON in and out, the server's error envelope turned into a typed `ApiError`, and a handler that signs out
 on 401. Payments send a fresh `Idempotency-Key` per submit.
+
+## Data entry, accounts and invoices (added)
+
+| Who | Screen | What |
+|---|---|---|
+| Academic admin, platform admin | Fee schedules | **Publish a new fee version** (closes the previous version the day before) |
+| Academic admin, support, platform admin | Students | **Add student** (optionally with a learner sign-in); **Edit details** and **Enrol** on the student page |
+| Academic admin, platform admin | Student page | **Assign a scholarship** (criteria still enforced) |
+| Platform admin | Users | create staff and learner logins, enable or disable access |
+| Learner | Account | edit name and housing; **Create a new account** is a button on the sign-in page |
+| Everyone who sees invoices | Student page, invoice page | **Download** one invoice as CSV, or print it to PDF |
+
+Who may do what is in [`permissions.md`](permissions.md) (generated from the route guards). The accent is orange (`--orange`), the app
+icon and favicon are the hand-drawn cap, books and receipt (`public/logo.png`, `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`).
+Charts: the balance line is one point per ledger entry (red dot = charge, green dot = payment or award; above the zero line the student owes,
+below it they hold credit); the "money by kind" donut sums ledger entries by kind.

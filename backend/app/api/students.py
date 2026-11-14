@@ -13,7 +13,7 @@ router = APIRouter(tags=["students"])
 
 @router.get("/students", dependencies=[require_role(*STAFF)])
 def list_students(conn: Conn, user: CurrentUser, page: Annotated[Page, Depends()],
-                  q: Annotated[str | None, Query(max_length=40)] = None,
+                  q: Annotated[str | None, Query(max_length=40, pattern=r"^[^\x00-\x1f]*$")] = None,
                   program_id: Annotated[str | None, Query(pattern=r"^PRG-\d{2}$")] = None,
                   owing: bool | None = None, flagged: bool | None = None):
     money = user.role != "INSTRUCTOR"

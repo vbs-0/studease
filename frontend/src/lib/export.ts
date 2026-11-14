@@ -43,3 +43,13 @@ export async function fetchAll<T = any>(path: string, query: Record<string, stri
   } while (after && out.length < cap);
   return out;
 }
+
+/** One invoice as a CSV file: a header block (who, when, status) then the lines and the total. */
+export async function downloadInvoice(id: string): Promise<void> {
+  const { invoice: inv, lines } = await get(`/invoices/${id}`);
+  const head = [["Invoice", inv.invoice_id], ["Student", inv.student_id], ["Issued", inv.issue_date], ["Due", inv.due_date], ["Status", inv.status]].map((r) => r.map(cell).join(","));
+  const body = toCsv(lines, [{ header: "Line", value: (l: any) => l.line_no }, { header: "Type", value: (l: any) => l.line_type }, { header: "Description", value: (l: any) => l.description },
+    { header: "Amount (rupees)", value: (l: any) => (l.amount_paise / 100).toFixed(2) }]);
+  const nl = "\r\n";
+  save(`${id}.csv`, "\ufeff" + head.join(nl) + nl + nl + body + ["", "", "Total", (inv.total_paise / 100).toFixed(2)].map(cell).join(",") + nl, "text/csv;charset=utf-8");
+}
