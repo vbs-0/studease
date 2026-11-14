@@ -15,7 +15,7 @@ fi
 
 REL="$(date -u +%Y%m%d%H%M%S)-$(git rev-parse --short HEAD)"
 echo "building frontend"
-(cd frontend && npm ci --no-audit --no-fund && npm run build)
+(cd frontend && { [ -d node_modules ] || npm ci --no-audit --no-fund; } && npm run build)   # clean installs happen in CI
 
 echo "uploading release $REL"
 ssh "$HOST" "mkdir -p $BASE/releases/$REL"
