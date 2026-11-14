@@ -25,6 +25,10 @@ class Counters:
             "event": top("SELECT coalesce(max(substr(event_id, 5)::int), 0) FROM event"),
             "payment": top("SELECT coalesce(max(substr(payment_id, 10)::int), 0) FROM payment"),
             "refund": top("SELECT coalesce(max(substr(refund_id, 10)::int), 0) FROM refund"),
+            "student": top("SELECT coalesce(max(substr(student_id, 5)::int), 0) FROM student"),
+            "user": top("SELECT coalesce(max(substr(app_user_id, 5)::int), 0) FROM app_user"),
+            "eligibility": top("SELECT coalesce(max(substr(eligibility_id, 10)::int), 0) FROM eligibility"),
+            "scholarship": top("SELECT coalesce(max(substr(scholarship_id, 10)::int), 0) FROM scholarship"),
         }
 
     def take(self, kind: str) -> int:

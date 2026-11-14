@@ -38,3 +38,17 @@ to the rule they affect; this page covers the engineering ones.
 Refund payout workflow beyond "approved" (no endpoint marks a refund paid), invoice cancellation by itself (only through
 withdrawal), editing fee schedules, user management screens, multi-currency, and a scheduler for invoicing and late fees.
 Each would be a straightforward addition on the same structure; none is needed to demonstrate the rules.
+
+## Added with the learner features and the redesign
+
+| # | Decision | Why | Cost or alternative |
+|---|---|---|---|
+| D-27 | **Self-service sign-up creates a synthetic student** | A learner needs an account to enrol, pay and see awards; the brief's data are synthetic, so a new student is one more synthetic row | Public and unthrottled while throttling is deferred; the form warns to use throwaway details |
+| D-28 | **One enrolment function for learners and staff** | The billing and scholarship rules run in exactly one place; a staff enrolment cannot differ from a self-service one | The function is long; it is the only multi-table create |
+| D-29 | **New rows are dated by the term calendar** | The generated data obey rules such as `enrolled_on <= term start`; dating a late sign-up "today" would break them | A new learner appears to have enrolled on the first day of term |
+| D-30 | **Payment and withdrawal are shared functions behind two routes** | The learner route differs only in where the student comes from (the token) and in the allowed payment methods | Two thin route functions per action |
+| D-31 | **Exports run in the browser** | The data is already authorised and in memory; no new server surface, no file storage, same permissions as the page | A very large export is bounded by `fetchAll`'s cap (20,000 rows) and the browser's memory |
+| D-32 | **CSV neutralises formulas** | A name or note such as `=HYPERLINK(...)` would execute when the file is opened in a spreadsheet | A leading apostrophe appears in such cells |
+| D-33 | **Reveals use transform, never opacity** | Text is never semi-transparent over a coloured card, and content cannot stay hidden if an animation does not run | Less soft than a fade |
+| D-34 | **One stylesheet and one component file for the design system** | Every page uses the same shapes; a restyle is one place | `index.css` is long; it is organised by section with comments |
+| D-35 | **API port 8110 on the server** | The default port was taken by another service on the same machine | Documented in `docs/deploy.md` and the unit and nginx files |

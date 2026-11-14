@@ -1,15 +1,21 @@
-import { Moon, Sun } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { LogOut, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router";
+import { get } from "../lib/api";
 import { useAuth, type Role } from "../lib/auth";
-import { label } from "../lib/format";
+import { inr, label } from "../lib/format";
+import { initMotion } from "../lib/motion";
+import { Logo, Toaster, TopBar } from "./ui";
 
-interface Item { to: string; text: string; roles: Role[] }
-const ALL: Role[] = ["LEARNER", "INSTRUCTOR", "ACADEMIC_ADMIN", "SUPPORT", "PLATFORM_ADMIN"];
+interface Item { to: string; text: string; roles: Role[]; end?: boolean }
 const FINANCE: Role[] = ["ACADEMIC_ADMIN", "SUPPORT", "PLATFORM_ADMIN"];
 const NAV: Item[] = [
-  { to: "/", text: "Overview", roles: FINANCE },
-  { to: "/me", text: "My account", roles: ["LEARNER"] },
+  { to: "/", text: "Overview", roles: FINANCE, end: true },
+  { to: "/me", text: "Account", roles: ["LEARNER"], end: true },
+  { to: "/me/enroll", text: "Enroll", roles: ["LEARNER"] },
+  { to: "/me/scholarships", text: "Scholarships", roles: ["LEARNER"] },
+  { to: "/me/fees", text: "Fees", roles: ["LEARNER"] },
   { to: "/students", text: "Students", roles: ["INSTRUCTOR", ...FINANCE] },
   { to: "/fees", text: "Fee schedules", roles: FINANCE },
   { to: "/scholarships", text: "Scholarships", roles: FINANCE },
@@ -31,32 +37,48 @@ function useTheme() {
 
 export function ThemeToggle() {
   const { dark, toggle } = useTheme();
-  return <button className="btn" onClick={toggle} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}>{dark ? <Sun size={16} /> : <Moon size={16} />}</button>;
+  return <button className="vx-icon" onClick={toggle} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}>{dark ? <Sun size={16} /> : <Moon size={16} />}</button>;
+}
+
+/** The books at a glance, scrolling along the bottom edge; live figures for roles that may see money. */
+function Ticker({ role }: { role: Role }) {
+  const money = FINANCE.includes(role);
+  const q = useQuery({ queryKey: ["overview"], queryFn: () => get("/metrics/overview"), enabled: money, staleTime: 60_000 });
+  const d = q.data;
+  const items: [string, string][] = [
+    ["As of", "5 Sep 2026"], ["Money", "integer paise, round half up"], ["Ledger", "append only"],
+    ...(d ? ([["Net billed", inr(d.charged_paise + d.credits_paise)], ["Collected", inr(d.paid_paise - d.refunded_paise)],
+      ["Owed", inr(d.owed_paise)], ["Open exceptions", String(d.open_exceptions)]] as [string, string][]) : []),
+    ["Balance", "checked three ways"],
+  ];
+  const run = items.map(([k, v]) => <em key={k}><i>&#9670;</i>{k} <b>{v}</b></em>);
+  return <div className="vx-ticker" aria-hidden="true"><div className="vx-track"><span>{run}</span><span>{run}</span></div></div>;
 }
 
 export default function Shell() {
   const { me, signOut } = useAuth();
+  useEffect(() => initMotion(), []);
   if (!me) return null;
-  const items = NAV.filter((i) => i.roles.includes(me.role) && ALL.includes(me.role));
+  const items = NAV.filter((i) => i.roles.includes(me.role));
   return (
-    <>
+    <div className="vx-app">
       <a className="skip" href="#main">Skip to content</a>
-      <div className="border-b border-rule-strong bg-sheet">
-        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 md:px-8">
-          <NavLink to={homeFor(me.role)} className="serif text-2xl text-ink no-underline">StudEase</NavLink>
-          <nav aria-label="Main" className="flex flex-wrap gap-x-4 gap-y-1">
-            {items.map((i) => (
-              <NavLink key={i.to} to={i.to} end={i.to === "/"} className={({ isActive }) => `text-sm font-semibold no-underline ${isActive ? "text-ink underline" : "text-muted"}`}>{i.text}</NavLink>
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-2">
-            <span className="hidden text-sm text-muted sm:inline">{me.email} <span className="stamp stamp-mute">{label(me.role)}</span></span>
-            <ThemeToggle />
-            <button className="btn" onClick={signOut}>Sign out</button>
-          </div>
+      <div className="vx-progress" aria-hidden="true" />
+      <TopBar />
+      <header className="vx-head no-print">
+        <NavLink to={homeFor(me.role)} className="vx-brand"><Logo size={30} /><span>StudEase</span></NavLink>
+        <nav aria-label="Main" className="vx-nav">
+          {items.map((i) => <NavLink key={i.to} to={i.to} end={i.end} className={({ isActive }) => `vx-link ${isActive ? "active" : ""}`}>{i.text}</NavLink>)}
+        </nav>
+        <div className="vx-actions">
+          <span className="vx-who" title={me.email}>{label(me.role)}</span>
+          <ThemeToggle />
+          <button className="vx-pill" onClick={signOut}><LogOut size={15} aria-hidden />Sign out</button>
         </div>
-      </div>
-      <main id="main" className="wrap"><Outlet /></main>
-    </>
+      </header>
+      <main id="main" className="vx-wrap"><Outlet /></main>
+      <Ticker role={me.role} />
+      <Toaster />
+    </div>
   );
 }

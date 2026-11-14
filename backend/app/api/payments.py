@@ -38,9 +38,28 @@ def _receipt(student_id: str, email: str | None, payment_id: str, amount: int, u
                   + f"Account: {student_id}")
 
 
+class OwnPayment(BaseModel):
+    """A learner paying their own bill: the student comes from the token, never from the request."""
+    model_config = ConfigDict(extra="forbid")
+    amount_paise: int = Field(ge=1, le=1_000_000_000)
+    method: Literal["UPI", "CARD", "NETBANKING"]
+    reference: str = Field(min_length=1, max_length=40)
+
+
 @router.post("/payments", status_code=201, dependencies=[require_role("SUPPORT", "PLATFORM_ADMIN")])
 def record_payment(body: NewPayment, conn: Conn, user: CurrentUser, tasks: BackgroundTasks, response: Response,
                    idempotency_key: KEY = None):
+    return record(body, conn, user, tasks, response, idempotency_key)
+
+
+@router.post("/me/payments", status_code=201, dependencies=[require_role("LEARNER")])
+def pay_own_bill(body: OwnPayment, conn: Conn, user: CurrentUser, tasks: BackgroundTasks, response: Response,
+                 idempotency_key: KEY = None):
+    return record(NewPayment(student_id=user.student_id, **body.model_dump()), conn, user, tasks, response,
+                  idempotency_key)
+
+
+def record(body: NewPayment, conn, user, tasks: BackgroundTasks, response: Response, idempotency_key: str | None):
     if not idempotency_key or not (8 <= len(idempotency_key) <= 80) or not idempotency_key.replace(
             "-", "").replace("_", "").replace(":", "").replace(".", "").isalnum():
         raise ApiError(422, "IDEMPOTENCY_KEY", "Send an Idempotency-Key header of 8 to 80 letters, digits, - _ : .")

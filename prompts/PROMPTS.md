@@ -122,6 +122,35 @@ and crash pages; a static 50x page; per-route titles and meta descriptions; a fa
 (already used, now documented); the deployment files and CI; this documentation. I ran the application locally and checked
 sign-in, the overview, the student page and the 404 page in a browser.
 
+## Session 5: deploying and redesigning
+
+**P19**
+> I'll paste the URL <the new public repository>
+>
+> and also
+>
+> first redesign the ui animations bruh not even close to the earlier project bruuh
+>
+> shapes structure animations feel structure
+>
+> and no proper loading animations etc.. aswell na bruh
+>
+> and and need export options
+>
+> also why lerner jhave only few options
+>
+> and also no create etc... options ?? for learner etc... and no create acc or signup etc... ?
+>
+> deploy to server first
+> dont push to git till i told u to
+
+*Result:* the application was deployed to the server (nginx, systemd service, database role, TLS certificate, the five demo
+logins); the front end was redesigned from the earlier project's design language (cut-corner and folder-tab cards, wavy nav,
+ticker, pill buttons, skeleton cards with real shapes, top progress bar, splash, toasts, charts that draw in); CSV, JSON and
+print exports were added to every list and account; learners gained sign-up, enrolment with a fee preview and scholarship
+checklist, self-service payment and withdrawal, their own awards, fees and statement, and a change-password form; staff can
+enrol a student. Nothing was pushed to the repository, as instructed.
+
 ## Other tools
 
 No other AI tool was used. No prompts were sent to anything other than the assistant above.

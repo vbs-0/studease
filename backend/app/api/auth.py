@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import text
 
 from app import mail, security
+from app.api import learner
 from app.api.deps import Conn, CurrentUser
 from app.api.errors import ApiError
 from app.config import settings
@@ -73,3 +74,36 @@ def reset(body: Reset, conn: Conn):
                  {"h": security.hash_password(body.new_password), "u": user["app_user_id"]})
     conn.commit()
     return {"message": "Password changed. You can sign in now."}
+
+
+@router.post("/signup", status_code=201)
+def signup(body: learner.Signup, conn: Conn):
+    """Create a learner account (a new synthetic student plus a login) and sign it in."""
+    user = learner.create_account(conn, body)
+    return {"token": security.make_token(user), "role": user["role"], "email": user["email"],
+            "student_id": user["student_id"], "program_id": None}
+
+
+class ChangePassword(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=12, max_length=128)
+
+
+@router.post("/change-password")
+def change_password(body: ChangePassword, conn: Conn, user: CurrentUser):
+    row = conn.execute(text("SELECT password_hash FROM app_user WHERE app_user_id = :u"),
+                       {"u": user.app_user_id}).mappings().one()
+    if not security.verify_password(body.current_password, row["password_hash"]):
+        raise ApiError(400, "BAD_CREDENTIALS", "Your current password is incorrect.")
+    conn.execute(text("UPDATE app_user SET password_hash = :h WHERE app_user_id = :u"),
+                 {"h": security.hash_password(body.new_password), "u": user.app_user_id})
+    conn.commit()
+    return {"message": "Password changed."}
+
+
+@router.get("/programs")
+def public_programs(conn: Conn):
+    """The program choices for the signup form (id, name and level only)."""
+    rows = conn.execute(text("SELECT program_id, name, level FROM program ORDER BY program_id")).mappings().all()
+    return {"items": [dict(r) for r in rows]}

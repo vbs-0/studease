@@ -1,7 +1,8 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router";
-import { Empty, ErrorBox, Header, Loading, Money, More, Spinner, Stamp } from "../components/ui";
+import { Empty, ErrorBox, ExportMenu, Header, Loading, Money, More, Spinner, Stamp, toast } from "../components/ui";
+import { downloadCsv, fetchAll } from "../lib/export";
 import { get, post } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { label } from "../lib/format";
@@ -17,6 +18,7 @@ export default function Exceptions() {
   const [type, setType] = useState("");
   const [open, setOpen] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [exporting, setExporting] = useState(false);
   const q = useInfiniteQuery({
     queryKey: ["exceptions", status, type], initialPageParam: "" as string,
     queryFn: ({ pageParam }) => get("/exceptions", { status, exception_type: type, after: pageParam, limit: 50 }),
@@ -30,7 +32,19 @@ export default function Exceptions() {
   const counts = q.data?.pages[0]?.counts ?? {};
   return (
     <>
-      <Header title="Exceptions" lead="Found by the detectors from the books alone. Each case names what the rules expect and what the data holds." />
+      <Header title="Exceptions" lead="Found by the detectors from the books alone. Each case names what the rules expect and what the data holds.">
+        <ExportMenu busy={exporting} onCsv={async () => {
+          setExporting(true);
+          try {
+            const all = await fetchAll("/exceptions", { status, exception_type: type });
+            downloadCsv("exceptions", all, [
+              { header: "Case", value: (e: any) => e.exception_id }, { header: "Type", value: (e: any) => e.exception_type }, { header: "Student", value: (e: any) => e.student_id },
+              { header: "Entity", value: (e: any) => e.entity_id }, { header: "Expected (paise)", value: (e: any) => e.expected_paise }, { header: "Found (paise)", value: (e: any) => e.found_paise },
+              { header: "Suggested decision", value: (e: any) => e.recommended_decision }, { header: "Status", value: (e: any) => e.status }, { header: "Note", value: (e: any) => e.note }]);
+            toast(`Exported ${all.length} exceptions`);
+          } finally { setExporting(false); }
+        }} />
+      </Header>
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <select className="field max-w-[12rem]" aria-label="Status" value={status} onChange={(e) => setStatus(e.target.value)}>
           {["OPEN", "RESOLVED", "DISMISSED"].map((s) => <option key={s} value={s}>{label(s)} ({counts[s] ?? 0})</option>)}</select>
@@ -38,7 +52,7 @@ export default function Exceptions() {
           <option value="">All types</option>{TYPES.map((t) => <option key={t} value={t}>{label(t)}</option>)}</select>
       </div>
       {q.isPending ? <Loading rows={6} /> : q.isError ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : rows.length === 0 ? <Empty>Nothing here.</Empty> : (
-        <div className="scroll-x"><table className="register"><thead><tr><th>Case</th><th>Type</th><th>Student</th><th className="num">Expected</th><th className="num">Found</th><th>Suggested</th><th>Status</th><th /></tr></thead><tbody>
+        <div className="panel scroll-x"><table className="register"><thead><tr><th>Case</th><th>Type</th><th>Student</th><th className="num">Expected</th><th className="num">Found</th><th>Suggested</th><th>Status</th><th /></tr></thead><tbody>
           {rows.map((e: any) => (
             <>
               <tr key={e.exception_id}><td>{e.exception_id}</td><td>{label(e.exception_type)}</td><td><Link to={`/students/${e.student_id}`}>{e.student_id}</Link></td>

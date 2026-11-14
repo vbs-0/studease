@@ -1,13 +1,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Navigate, Outlet, RouterProvider, createBrowserRouter } from "react-router";
 import Shell, { homeFor } from "./components/Shell";
-import { Loading } from "./components/ui";
+import { Splash } from "./components/ui";
 import { ApiError } from "./lib/api";
 import { AuthProvider, useAuth, type Role } from "./lib/auth";
 import { Fees, Scholarships } from "./pages/Catalog";
 import { Forbidden, NotFound, RouteError } from "./pages/ErrorPages";
 import Exceptions from "./pages/Exceptions";
-import { Forgot, Login, Reset } from "./pages/Auth";
+import { Forgot, Login, Reset, Signup } from "./pages/Auth";
+import { Enroll, MyFees, MyScholarships } from "./pages/Learner";
 import InvoicePage from "./pages/InvoicePage";
 import Overview from "./pages/Overview";
 import Quality from "./pages/Quality";
@@ -22,7 +23,7 @@ const client = new QueryClient({
 /** Signed-out visitors go to /login; a role not in `roles` sees the 403 page. */
 function Guard({ roles }: { roles?: Role[] }) {
   const { me, loading } = useAuth();
-  if (loading) return <div className="wrap"><Loading rows={5} /></div>;
+  if (loading) return <Splash />;
   if (!me) return <Navigate to="/login" replace />;
   if (roles && !roles.includes(me.role)) return <Forbidden />;
   return <Outlet />;
@@ -36,6 +37,7 @@ function Home() {
 const FINANCE: Role[] = ["ACADEMIC_ADMIN", "SUPPORT", "PLATFORM_ADMIN"];
 const router = createBrowserRouter([
   { path: "/login", element: <Login />, errorElement: <RouteError /> },
+  { path: "/signup", element: <Signup />, errorElement: <RouteError /> },
   { path: "/forgot", element: <Forgot /> },
   { path: "/reset", element: <Reset /> },
   {
@@ -45,7 +47,9 @@ const router = createBrowserRouter([
       children: [
         { path: "/", element: <Guard roles={FINANCE} />, children: [{ index: true, element: <Overview /> }] },
         { path: "/home", element: <Home /> },
-        { path: "/me", element: <Guard roles={["LEARNER"]} />, children: [{ index: true, element: <MyAccount /> }] },
+        { path: "/me", element: <Guard roles={["LEARNER"]} />, children: [
+          { index: true, element: <MyAccount /> }, { path: "enroll", element: <Enroll /> },
+          { path: "scholarships", element: <MyScholarships /> }, { path: "fees", element: <MyFees /> }] },
         { path: "/students", element: <Guard roles={["INSTRUCTOR", ...FINANCE]} />, children: [{ index: true, element: <Students /> }, { path: ":id", element: <StudentRoute /> }] },
         { path: "/invoices/:id", element: <Guard roles={["LEARNER", ...FINANCE]} />, children: [{ index: true, element: <InvoicePage /> }] },
         { path: "/fees", element: <Guard roles={FINANCE} />, children: [{ index: true, element: <Fees /> }] },

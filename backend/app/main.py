@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import logging as applog
-from app.api import auth, catalog, enrollments, errors, exceptions, metrics, payments, students
+from app.api import auth, catalog, enrollments, errors, exceptions, learner, metrics, payments, students
 from app.config import settings
 
 settings.check()                       # S-6: refuse to start in production with default secrets
@@ -37,7 +37,7 @@ async def request_context(request: Request, call_next):
     return response
 
 
-for module in (auth, metrics, students, catalog, payments, enrollments, exceptions):
+for module in (auth, metrics, students, catalog, payments, enrollments, exceptions, learner):
     app.include_router(module.router, prefix="/api/v1")
 
 

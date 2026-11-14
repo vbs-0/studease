@@ -376,6 +376,12 @@ list endpoints use keyset pagination (`?after=<id>&limit=50`, max 200); every re
 |---|---|---|
 | POST `/auth/login`, GET `/auth/me` | all | sign in, identity |
 | POST `/auth/forgot`, POST `/auth/reset` | public | email a reset link; set a new password with it |
+| POST `/auth/signup`, GET `/auth/programs` | public | create a learner account (a new synthetic student plus a login) and sign in; program choices |
+| POST `/auth/change-password` | all | change own password (current password required) |
+| GET `/me/enrollable`, POST `/me/enroll` | LEARNER | open terms with fee preview and scheme eligibility; enrol, bill and decide scholarships |
+| POST `/me/payments`, POST `/me/enrollments/{id}/withdraw` | LEARNER | pay own bill (UPI, card, net banking); withdraw own enrollment |
+| GET `/me/scholarships`, GET `/me/fees` | LEARNER | own awards and every eligibility decision; own program's fee schedule |
+| POST `/students/{id}/enroll` | ACADEMIC_ADMIN, SUPPORT, PLATFORM_ADMIN | enrol a student through the same code as self-service |
 | GET `/metrics/overview` | staff | headline figures, by term and by program |
 | GET `/students` | staff | search and list, with balance and flags |
 | GET `/students/{id}` | staff, own learner | profile, enrollments, invoices, balance (stated and ledger) |
@@ -503,3 +509,17 @@ a `login_attempt` table, 5 failures per email and 20 attempts per IP per 15 minu
 `mail.send(to, subject, text)` is used in two places: the password-reset link, and a receipt to the
 learner's login email when a payment is recorded. Sending happens after the database transaction commits
 and a mail failure is logged and never fails the request.
+
+### 7.1 Learner self-service (added after the first release)
+
+- **Sign-up** creates one `student` and one `app_user` (role LEARNER) in a single transaction under the id lock. The student
+  row carries a reserved `@example.edu` address (the data rule); the login keeps the address the person typed. The role and
+  student id are never accepted from the request body (`extra = forbid`). Sign-up is public and unthrottled (deferred by
+  decision, section 12); an email that already has an account answers 409, which reveals that the address exists (accepted for a demo).
+- **Enrol** reuses the domain functions the generator uses: `build_invoice_lines` (R-BILL), `decide` (R-SCH), `credit_lines`
+  (R-SCH-5), `entry_for_line` (R-LED). Only terms that have not ended by the as-of date, and in which the student has no enrolment,
+  can be chosen. **Dates follow the term calendar** (enrolled on the first day, invoice issued on the term's issue date, decisions on
+  the issue date) so a new row obeys the same rules as a generated one; payments and withdrawals made through the API are dated
+  the as-of day. Carried credit from an earlier payment is not auto-applied to a new invoice by this path (a known limit).
+- **Ownership:** every `/me` route takes the student from the token; withdrawing someone else's enrolment answers 404, the same
+  as a missing one; staff routes cannot be called by a learner (403); learners may pay only by UPI, card or net banking.

@@ -11,6 +11,10 @@ generator, five labelled anomalies, a validator, detectors and a working three-t
 - **App:** `frontend/` (React + TypeScript), `backend/` (FastAPI), `database/` (PostgreSQL schema and migrations).
   Three tiers in three folders; the business rules live in a pure `backend/app/domain/` package with no framework in it.
 
+**Live demo:** https://studease.is-cool.dev. Sign in as `learner@`, `instructor@`, `academic@`, `support@` or `admin@example.edu` with the
+demo-only password `Studease-Demo-2026`, or create your own learner account from the sign-in page. The demo accepts writes (payments, enrolments,
+withdrawals, resolutions) by design; all data is synthetic.
+
 Start with [docs/walkthrough.md](docs/walkthrough.md) (one student followed end to end) or
 [docs/architecture.md](docs/architecture.md) (every rule, with its id).
 
@@ -33,7 +37,8 @@ python scripts/dev.py web          # app on http://localhost:5173  (second termi
 macOS and Linux are all supported (the runner is standard-library Python).
 
 Sign in at `http://localhost:5173` with `learner@`, `instructor@`, `academic@`, `support@` or `admin@example.edu`
-and the `DEMO_PASSWORD` you set. Each role sees and can do different things ([architecture §3](docs/architecture.md)).
+and the `DEMO_PASSWORD` you set, or use **Create a learner account** on the sign-in page. Each role sees and can do different
+things ([architecture §3](docs/architecture.md), [docs/frontend.md](docs/frontend.md)).
 
 To load the full 10,000-student dataset instead: `SCALE=full python scripts/dev.py load` (about 30 seconds).
 
@@ -47,7 +52,7 @@ password-reset links and payment receipts; `MAIL_TEST_TO` redirects mail meant f
 ## Tests
 
 ```bash
-python scripts/dev.py test            # backend: 220+ tests (domain rules, data, API, security, loader)
+python scripts/dev.py test            # backend: 230+ tests (domain rules, data, API, security, loader)
 cd frontend && npm test               # frontend unit tests
 python scripts/dev.py lint            # ruff
 cd frontend && npx tsc -b             # TypeScript
@@ -99,6 +104,13 @@ an input table; a test fails if a leak word appears in any input table.
 - **Append-only history:** the ledger and the event table are only ever added to; reversals are negative rows.
 - **Database as a second line of defence:** primary and foreign keys, `CHECK` constraints for every enumeration and
   sign rule; the backend cannot write a forbidden row even if it has a bug.
+- **A complete learner journey:** create an account, enrol in a term (fee preview, scholarship checklist with the reason for every scheme
+  you do not meet), pay, withdraw, see awards and fees, export a statement, change your password. Staff can enrol a student through the same code.
+- **Export everywhere:** CSV (spreadsheet-safe: UTF-8 BOM, formula neutralisation), JSON and Print / PDF on every list and account; lists export
+  the whole filtered set, not the visible page.
+- **A designed interface, not a template:** cut-corner and folder-tab cards, wavy navigation, a live ticker, pill buttons, scroll and pointer
+  motion, charts that draw in, skeleton cards with the real shapes while data loads, a top progress bar, a splash, toasts, light and dark themes
+  ([docs/frontend.md](docs/frontend.md)).
 - **Safe writes:** a payment is idempotent (`Idempotency-Key`, scoped to the caller), takes a row lock on the student and
   an advisory lock for id numbering, and writes the payment, allocations, ledger, events and balance in one transaction.
 - **Security:** scrypt passwords, pinned-algorithm JWTs, role checks in one place, object-level scoping, bound
@@ -155,6 +167,7 @@ account of what was generated, what I changed and how I checked it are in [promp
 | [docs/practices.md](docs/practices.md) | each engineering practice used, where, why and how far |
 | [docs/decisions.md](docs/decisions.md) | the choices that could have gone another way, and the reasons |
 | [docs/testing.md](docs/testing.md) | the test strategy and what each group proves |
+| [docs/frontend.md](docs/frontend.md) | the design system, motion, loading states, pages by role, exports, error pages, accessibility |
 | [docs/deploy.md](docs/deploy.md) | production setup, deploy, rollback, mail, operations |
 | [docs/walkthrough.md](docs/walkthrough.md) | one student, every record, generated from the data |
 | [docs/data_dictionary.md](docs/data_dictionary.md), [docs/erd.md](docs/erd.md) | generated from the schema |

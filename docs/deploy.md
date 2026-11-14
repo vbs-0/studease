@@ -14,7 +14,7 @@ application itself runs the same way locally (see the README); deployment only a
   app -> releases/...    symlink to the live release (switched atomically)
 ```
 
-nginx serves `frontend/dist` and proxies `/api/` to uvicorn on `127.0.0.1:8110`. The API is never exposed directly.
+nginx serves `frontend/dist` and proxies `/api/` to uvicorn on `127.0.0.1:8110`. The API is never exposed directly. (Port 8110 was chosen because 8100 was already used by another service on the same machine; check `ss -ltn` for a free port when deploying elsewhere.)
 
 ## One-time setup
 

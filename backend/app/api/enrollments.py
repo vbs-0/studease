@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import text
 
 from app import ids
-from app.api import txn
+from app.api import learner, txn
 from app.api.deps import Conn, CurrentUser, check_id, require_role
 from app.api.errors import ApiError
 from app.domain import ledger, status
@@ -31,6 +31,19 @@ class Withdraw(BaseModel):
 
 @router.post("/enrollments/{enrollment_id}/withdraw", dependencies=[require_role("ACADEMIC_ADMIN", "PLATFORM_ADMIN")])
 def withdraw(enrollment_id: str, body: Withdraw, conn: Conn, user: CurrentUser):
+    return do_withdraw(enrollment_id, body, conn, user)
+
+
+@router.post("/me/enrollments/{enrollment_id}/withdraw", dependencies=[require_role("LEARNER")])
+def withdraw_own(enrollment_id: str, body: Withdraw, conn: Conn, user: CurrentUser):
+    check_id("enrollment", enrollment_id)
+    owner = conn.execute(text("SELECT student_id FROM enrollment WHERE enrollment_id = :e"), {"e": enrollment_id}).scalar()
+    if owner != user.student_id:                       # someone else's enrollment looks exactly like a missing one
+        raise ApiError(404, "NOT_FOUND", "No such enrollment.")
+    return do_withdraw(enrollment_id, body, conn, user)
+
+
+def do_withdraw(enrollment_id: str, body: Withdraw, conn, user: CurrentUser):
     check_id("enrollment", enrollment_id)
     enr = conn.execute(text("SELECT * FROM enrollment WHERE enrollment_id = :e"),
                        {"e": enrollment_id}).mappings().first()
@@ -132,3 +145,12 @@ def withdraw(enrollment_id: str, body: Withdraw, conn: Conn, user: CurrentUser):
     out["balance"] = txn.refresh_balance(conn, sid, AS_OF)
     conn.commit()
     return out
+
+
+@router.post("/students/{student_id}/enroll", status_code=201,
+             dependencies=[require_role("ACADEMIC_ADMIN", "SUPPORT", "PLATFORM_ADMIN")])
+def enroll_for(student_id: str, body: learner.Enroll, conn: Conn, user: CurrentUser):
+    check_id("student", student_id)
+    if conn.execute(text("SELECT 1 FROM student WHERE student_id = :s"), {"s": student_id}).first() is None:
+        raise ApiError(404, "NOT_FOUND", "No such student.")
+    return learner.enroll_student(conn, student_id, body.term_id, list(dict.fromkeys(body.applications)), user.app_user_id)

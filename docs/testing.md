@@ -24,9 +24,11 @@ migrated to head, and skip with a clear message if the cluster is not running.
 | `tests/api/test_security.py` | S-1 (no string-built SQL), S-3, S-4, S-6, S-7 (forged, expired, wrong-algorithm and disabled-user tokens), S-2 (learner and instructor scope), S-10, S-11, S-12, S-23, and a pinned "no throttling yet" test |
 | `tests/api/test_reads.py` | paging without gaps or repeats, filters, the three-way reconciliation figures, invoice detail, overview totals, and a query-count budget (no N+1) |
 | `tests/api/test_writes.py` | payment allocation and reconciliation, idempotent replay and mismatch, per-caller keys, two concurrent payments for one student, withdrawal and cancellation with reversals and refunds, exception resolution |
+| `tests/api/test_learner.py` | sign-up (validation, duplicate email, no role or student smuggled in), enrolment (billing, scholarship decision, books reconcile three ways, ended or repeated term refused), self-service pay and withdraw, ownership checks, staff enrolment, own fees, change password |
 | `tests/test_docs.py` | the generated documents are current and cover every table and field |
 | `tests/test_scrub_check.py` | the public-repo hygiene scan catches each leak type, allows synthetic data, and the repository is clean |
 | `frontend/src/lib/format.test.ts` | rupee formatting, dates, status tones |
+| `frontend/src/lib/export.test.ts` | CSV quoting, line ends, formula neutralisation, empty cells |
 
 ## Properties worth knowing
 
