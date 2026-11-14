@@ -20,7 +20,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with: { channel: stable, cache: true }
       - run: cd mobile && flutter pub get
-      - name: Build the APKs (the build is signed with the debug key: fine for sideloading, not for the Play Store)
+      - name: Build the APKs (debug-signed, fine for sideloading)
         run: |
           cd mobile
           flutter build apk --release
