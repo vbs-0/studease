@@ -252,3 +252,7 @@ html[data-motion="on"] .vx-r.vx-in { transform: none; }
 .line-dot:hover { transform: scale(1.5); }
 @media (prefers-reduced-motion: reduce) { .line-path, .line-area, .line-dot { animation: none; } }
 .hero-card .btn, .hero-card .btn-solid { background-color: var(--paper); color: var(--ink); border-color: var(--paper); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .mint-card { color: #f4f1e8; }
+  :root:not([data-theme="light"]) .mint-card .eyebrow, :root:not([data-theme="light"]) .mint-card .note { color: rgba(244, 241, 232, .7); }
+}
