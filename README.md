@@ -145,6 +145,76 @@ an input table; a test fails if a leak word appears in any input table.
   one-command rollback; CI runs lint, tests, the docs-freshness check, the reproducibility check and the hygiene scan.
   How it is deployed, step by step: [docs/deploy.md](docs/deploy.md).
 
+## Engineering extras (the long list)
+
+Beyond the required features, these are implemented and tested or checkable in the repo. Each line is one thing a reviewer can ask about.
+
+**Performance and loading**
+1. Route-level code splitting: every page is a `React.lazy` chunk, fetched on first visit (`frontend/src/App.tsx`), with a skeleton fallback.
+2. Vendor chunks (`react`, `query`) split out so they cache across releases.
+3. Hashed assets served `Cache-Control: public, immutable`; gzip on for text, JS, JSON and SVG.
+4. Keyset (cursor) pagination on every list: stable under concurrent writes, constant cost at any depth, no gaps or repeats (tested).
+5. "Load more" paging in the UI; exports follow the cursor to fetch the whole filtered set on demand.
+6. Search debounced (250 ms) so typing does not fire a request per key.
+7. TanStack Query cache (30 s) with exact invalidation after writes; no retry on 4xx, two retries on 5xx.
+8. A test proves list endpoints run a constant number of SQL queries (no N+1).
+9. Reveal animations use `transform` only (no layout thrash); `prefers-reduced-motion` switches animation off.
+10. Charts are inline SVG, no chart library; fonts self-hosted and subset; the only image is a small async-decoded logo.
+
+**Loading and error experience**
+11. Skeleton cards that carry the real shapes and labels of the cards that replace them.
+12. A top progress bar while any request runs (appears after 120 ms so quick requests do not flicker).
+13. Splash screen on first load; spinner on every button that submits; toasts for results.
+14. Custom 404, 403 and crash pages; route error boundary; an expired session returns you to sign-in.
+15. A static `50x.html` from nginx when the API is down.
+16. Every API error is one JSON envelope with a request id, and no stack trace ever reaches a client.
+
+**Data integrity and money**
+17. Integer paise and basis points everywhere; one rounding rule (half up).
+18. Append-only ledger and event history; mistakes are corrected by new rows, never edits.
+19. Three-way balance reconciliation (stated, ledger, invoices minus payments plus refunds) shown on screen with a strike through any figure that disagrees.
+20. Database `CHECK`, primary and foreign key constraints as a second line of defence behind the application rules.
+21. Idempotency keys (scoped to the caller, bound to the body hash): a retried payment never double-posts.
+22. Row lock per student plus an advisory lock for id numbering; a concurrency test proves no double allocation.
+23. One transaction per write: payment, allocations, ledger, events and balance commit together or not at all.
+24. Deterministic synthetic data (one seed, byte-identical output) with a reproducibility check.
+25. Detectors compared with hidden ground truth in an evaluation report, with the honest limits stated.
+26. Versioned fee schedules; a new price is billed only to later enrolments.
+
+**Security**
+27. scrypt password hashing; pinned-algorithm JWTs; role and enabled flag re-read from the database on every request.
+28. Role guards in one place plus object-level scoping (out-of-scope ids answer 404, so ids cannot be probed).
+29. Bound SQL parameters only; a test fails if any SQL is built from strings.
+30. Strict request models (`extra="forbid"`, patterns, ranges, lengths) and a control-character guard.
+31. Login answers identically for unknown email and wrong password; forgot-password always answers 202; reset links are one-time.
+32. CORS allow-list; HSTS, CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy headers; production refuses to start with default secrets.
+33. CSV exports neutralise spreadsheet formulas (`=`, `+`, `-`, `@`).
+34. Secret and personal-data scrub check (`scripts/scrub_check.py`) runs in tests and CI.
+
+**Accessibility and polish**
+35. Skip link, visible focus rings, labelled inputs, `role="status"` and `role="alert"` messages, chart text alternatives.
+36. Light and dark themes (system default, manual toggle remembered), a print stylesheet, mobile layout from 360 px.
+37. Per-page titles and meta descriptions, Open Graph tags, `robots.txt`, a web manifest, favicon and app icons.
+38. Indian digit grouping (₹12,34,567.00) and locale-independent date formatting; tabular numerals so columns line up.
+39. Export on every list and account: CSV, JSON and Print / PDF; per-invoice download.
+40. Staff data entry, user administration and a visible sign-up path for every kind of account.
+
+**Observability and operations**
+41. Request id on every response (`X-Request-ID`) and in every log line; structured JSON access log.
+42. `/healthz` and `/readyz`; a deploy script that waits for health and fails loudly.
+43. Releases under timestamped folders with a symlink; one-command rollback.
+44. systemd unit (hardened), nginx reverse proxy, TLS from certbot, a non-root service user.
+45. Alembic migrations as the only way the schema changes.
+
+**Quality gates and documentation**
+46. 318 backend tests (domain, data generation, engine, API, security, edge cases) and frontend unit tests; ruff and `tsc` clean.
+47. 35 edge-case tests with a catalogue ([docs/edge-cases.md](docs/edge-cases.md)).
+48. A permission matrix generated from the route guards, and a test that fails when the committed copy is stale ([docs/permissions.md](docs/permissions.md)).
+49. Data dictionary, ERD and a one-student walkthrough generated from the schema and data, also freshness-tested.
+50. GitHub Actions CI: lint, tests, docs freshness, reproducibility, hygiene scan.
+51. Cross-platform task runner (`scripts/dev.py`, `Makefile`), a one-step Windows launcher (`run.bat`) and [SETUP.md](SETUP.md).
+52. Prompt history and a statement of AI use ([prompts/](prompts)), architecture diagrams and design decisions recorded with reasons.
+
 ## Code architecture
 
 Three tiers in three folders. The business rules live in a pure `domain/` package that knows nothing about HTTP or SQL; everything else depends on it, never the other way round.
