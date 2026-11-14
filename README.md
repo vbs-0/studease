@@ -40,8 +40,35 @@ Also in `docs/screenshots/`: `learner-enroll.png`, `students.png`, `data-quality
 **Windows, one step:** run [`run.bat`](run.bat). It checks the tools, installs, starts the database, loads the data and opens the app
 (details and troubleshooting in [SETUP.md](SETUP.md)). Or follow the manual steps below.
 
-Prerequisites: Python 3.12+, [uv](https://docs.astral.sh/uv/), Node 20+, PostgreSQL 14+ (the client and server
-binaries; the project creates its own throwaway cluster, it never touches an existing one).
+### Prerequisites and setup flow
+
+```mermaid
+flowchart LR
+  subgraph Need["Install once"]
+    P["Python 3.12+"]
+    U["uv<br/>(Python packages)"]
+    N["Node.js 20+<br/>(with npm)"]
+    G[("PostgreSQL 14+<br/>client and server binaries")]
+  end
+  subgraph Run["Then, in the repository"]
+    I["install<br/>uv sync + npm ci"] --> D["db-up<br/>private cluster on 127.0.0.1:15433"]
+    D --> M["migrate<br/>Alembic creates the tables"]
+    M --> L["load<br/>starter data + 5 demo logins"]
+    L --> A["api :8000<br/>FastAPI"]
+    L --> W["web :5173<br/>React"]
+  end
+  P --> I
+  U --> I
+  N --> I
+  G --> D
+  A --> B(["Open http://localhost:5173"])
+  W --> B
+  R["Windows: run.bat does every step in Run"] -.-> I
+```
+
+No Docker and no accounts are needed. The database is a throwaway cluster inside the project (`.pgdata/`), so an existing PostgreSQL is never touched.
+
+The same steps as commands:
 
 ```bash
 python scripts/dev.py install      # backend and frontend dependencies
@@ -221,6 +248,11 @@ Beyond the required features, these are implemented and tested or checkable in t
 50. GitHub Actions CI: lint, tests, docs freshness, reproducibility, hygiene scan.
 51. Cross-platform task runner (`scripts/dev.py`, `Makefile`), a one-step Windows launcher (`run.bat`) and [SETUP.md](SETUP.md).
 52. Prompt history and a statement of AI use ([prompts/](prompts)), architecture diagrams and design decisions recorded with reasons.
+
+**Mobile layout (website and app)**
+
+53. Phone layout of the website: no sideways scrolling at any width (grid tracks may shrink below their content), one-column cards on narrow screens, tabs that share one row, a compact header with an icon-only sign-out, 44 px touch targets and full-width toasts.
+54. A native Android app (`mobile/`, Flutter) with the same look and every feature of the website, per-role bottom navigation, pull-to-refresh, an offline copy of the last data, CSV sharing through the phone's share sheet, and light, dark or system theme.
 
 ## Code architecture
 

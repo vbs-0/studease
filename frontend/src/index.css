@@ -284,3 +284,11 @@ svg { max-width: 100%; height: auto; }
   .vx-nav { border-top: 1px solid var(--rule); padding-top: 4px; margin-top: 2px; }
   .vx-link { padding: 8px 10px 12px; }
 }
+/* mobile nav: tabs share the row and fit (four or five labels), no stray focus box after a tap, room for the wavy underline */
+@media (max-width: 767px) {
+  .vx-nav { gap: 0; justify-content: space-between; mask-image: none; padding-bottom: 6px; overflow-y: hidden; }
+  .vx-link { flex: 0 1 auto; font-size: 16px; padding: 8px 7px 14px; }
+  .vx-link:focus:not(:focus-visible) { outline: none; }
+}
+@media (max-width: 400px) { .vx-link { font-size: 15px; padding: 8px 5px 14px; } }
+.vx-link:focus:not(:focus-visible) { outline: none; }
