@@ -18,6 +18,52 @@ withdrawals, resolutions) by design; all data is synthetic.
 Start with [docs/walkthrough.md](docs/walkthrough.md) (one student followed end to end) or
 [docs/architecture.md](docs/architecture.md) (every rule, with its id).
 
+## Repository structure
+
+```mermaid
+flowchart TB
+  subgraph clients["Clients"]
+    FE["frontend/<br/>React website"]
+    MO["mobile/<br/>Flutter Android app"]
+  end
+  subgraph server["Server"]
+    API["backend/app/api<br/>HTTP routes and role guards"]
+    DOM["backend/app/domain<br/>pure business rules"]
+    ENG["backend/app/engine<br/>loader, detectors, evaluation"]
+    GEN["backend/app/datagen<br/>synthetic data generator"]
+  end
+  DB[("database/<br/>PostgreSQL schema + migrations")]
+  DATA["data/ and reports/<br/>datasets, ground truth, reports"]
+  OPS["deploy/ and .github/<br/>nginx, systemd, CI/CD, Docker"]
+  FE --> API
+  MO --> API
+  API --> DOM
+  API --> DB
+  ENG --> DB
+  GEN --> DATA
+  DATA --> ENG
+  OPS -.->|"ships"| API
+```
+
+| Folder | What is in it |
+|---|---|
+| `backend/app/api/` | One file per area: `auth.py` (sign in, sign up, reset), `students.py`, `payments.py`, `enrollments.py`, `catalog.py` (programs, terms, fee schedules), `admin.py` (data entry, users), `exceptions.py`, `metrics.py` (overview, quality, health), `deps.py` (role guards), `errors.py` (error envelope) |
+| `backend/app/domain/` | Pure rules with no framework: `fees.py`, `billing.py`, `scholarships.py`, `allocation.py` (oldest due line first), `ledger.py`, `withdrawal.py`, `latefees.py`, `status.py`, `calendar.py` |
+| `backend/app/engine/` | `loader.py` (bulk load), `detect.py` (anomaly detectors), `evaluate.py` (precision and recall), `users.py` |
+| `backend/app/datagen/` | The seeded generator: `generator.py`, `simulate.py`, `anomalies.py`, `validate.py`, `repro.py` |
+| `backend/app/` (top level) | `main.py` (app), `schema.py` (tables), `security.py`, `config.py`, `docs_gen.py` and `permissions_doc.py` (generate the docs), `cli.py` |
+| `backend/tests/` | API, domain, engine and docs tests (318) |
+| `database/` | Alembic migrations (`migrations/versions/`), `seed/` SQL, `alembic.ini` |
+| `frontend/src/` | `pages/` (Overview, Students, StudentPage, Learner, Admin, Exceptions, Quality, ...), `components/` (Shell, charts, ui kit), `lib/` (API client, exports), `index.css` (design tokens) |
+| `mobile/lib/` | `main.dart` (app shell and role tabs), `api.dart` (HTTP, token, offline cache), `screens/` (auth, learner, staff, student, invoice, more), `ui/` (widgets and charts), `theme.dart` |
+| `data/`, `reports/` | Generated datasets with manifests and ground truth; validation, reproducibility and evaluation reports |
+| `deploy/` | `deploy.sh`, `nginx-studease.conf`, `studease-api.service` |
+| `.github/workflows/` | `ci.yml` (tests), `release-apk.yml` (Android release), `docker.yml` (API image) |
+| `scripts/` | `dev.py` (task runner), `scrub_check.py` (secrets and personal data check) |
+| `docs/` | Architecture, permissions, edge cases, testing, deploy, data dictionary, ERD, walkthrough, screenshots |
+| `prompts/` | Prompt history and the statement of AI use |
+| root | `run.bat` (one-step start on Windows), `SETUP.md`, `Makefile` |
+
 ## Screens
 
 | | |
@@ -408,20 +454,6 @@ flowchart LR
 ```
 
 The full role-by-route table is generated from the code: [docs/permissions.md](docs/permissions.md). The rules, entities and API are in [docs/architecture.md](docs/architecture.md).
-
-## Repository map
-
-```
-frontend/   React 19 + Vite + TypeScript + Tailwind 4 (pages, design system, unit tests)
-backend/    FastAPI app (app/api, app/domain, app/datagen, app/engine), tests/, pyproject.toml, uv.lock
-database/   PostgreSQL schema as Alembic migrations, seed SQL for the starter data
-data/       generated datasets, manifests and ground truth
-reports/    validation, reproducibility and evaluation reports
-deploy/     nginx, systemd, deploy script
-scripts/    dev.py (cross-platform task runner), scrub_check.py
-docs/       architecture, practices, decisions, testing, deploy, data dictionary, ERD, walkthrough
-prompts/    prompt history and the statement of AI use
-```
 
 ## Honest limits
 
