@@ -18,6 +18,12 @@ withdrawals, resolutions) by design; all data is synthetic.
 Start with [docs/walkthrough.md](docs/walkthrough.md) (one student followed end to end) or
 [docs/architecture.md](docs/architecture.md) (every rule, with its id).
 
+<p align="center">
+  <img src="docs/screenshots/mobile/phones.png" alt="The StudEase Android app: sign in, enrol, scholarships, account, staff overview">
+</p>
+
+*The Android app on a real phone. Download the APK from the [latest release](https://github.com/vbs-0/studease/releases/latest).*
+
 ## Repository structure
 
 ```mermaid
@@ -80,18 +86,6 @@ flowchart TB
 | Staff data entry | Dark theme |
 
 Also in `docs/screenshots/`: `learner-enroll.png`, `students.png`, `data-quality.png`. All are 1440 by 810 desktop captures.
-
-## Android app, on a real phone
-
-<p align="center">
-  <img src="docs/screenshots/mobile/sign-in.png" width="19%" alt="Sign in">
-  <img src="docs/screenshots/mobile/enrol.png" width="19%" alt="Enrol">
-  <img src="docs/screenshots/mobile/scholarships.png" width="19%" alt="Scholarships">
-  <img src="docs/screenshots/mobile/more.png" width="19%" alt="Account and settings">
-  <img src="docs/screenshots/mobile/overview.png" width="19%" alt="Staff overview">
-</p>
-
-Sign in, enrol, scholarships, account settings and the staff overview, captured on a physical Android phone. Download the APK from the [latest release](https://github.com/vbs-0/studease/releases/latest); details in [Android app](#android-app) below.
 
 ## Quick start
 
@@ -315,14 +309,6 @@ Beyond the required features, these are implemented and tested or checkable in t
 ## Android app
 
 The same product as a native Android app, in [`mobile/`](mobile): Flutter 3.44, Material 3, about 2,600 lines of Dart, no code generation. It talks to the same live API as the website, so every rule (roles, idempotent payments, the append-only ledger) is enforced by the server, never by the phone.
-
-<p align="center">
-  <img src="docs/screenshots/mobile/sign-in.png" width="19%" alt="Sign in">
-  <img src="docs/screenshots/mobile/enrol.png" width="19%" alt="Enrol">
-  <img src="docs/screenshots/mobile/scholarships.png" width="19%" alt="Scholarships">
-  <img src="docs/screenshots/mobile/more.png" width="19%" alt="Account and settings">
-  <img src="docs/screenshots/mobile/overview.png" width="19%" alt="Staff overview">
-</p>
 
 ### What it does, by role
 
