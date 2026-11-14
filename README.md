@@ -35,6 +35,18 @@ Start with [docs/walkthrough.md](docs/walkthrough.md) (one student followed end 
 
 Also in `docs/screenshots/`: `learner-enroll.png`, `students.png`, `data-quality.png`. All are 1440 by 810 desktop captures.
 
+## Android app, on a real phone
+
+<p align="center">
+  <img src="docs/screenshots/mobile/sign-in.png" width="19%" alt="Sign in">
+  <img src="docs/screenshots/mobile/enrol.png" width="19%" alt="Enrol">
+  <img src="docs/screenshots/mobile/scholarships.png" width="19%" alt="Scholarships">
+  <img src="docs/screenshots/mobile/more.png" width="19%" alt="Account and settings">
+  <img src="docs/screenshots/mobile/overview.png" width="19%" alt="Staff overview">
+</p>
+
+Sign in, enrol, scholarships, account settings and the staff overview, captured on a physical Android phone. Download the APK from the [latest release](https://github.com/vbs-0/studease/releases/latest); details in [Android app](#android-app) below.
+
 ## Quick start
 
 **Windows, one step:** run [`run.bat`](run.bat). It checks the tools, installs, starts the database, loads the data and opens the app
