@@ -22,6 +22,7 @@ from app.datagen import writer
 from app.datagen.generator import DEFAULT_SEED, generate
 from app.datagen.scale import SCALES
 from app.engine import detect, evaluate, loader
+from app.engine import users as users_mod
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -94,6 +95,8 @@ def cmd_load(a) -> int:
     started = time.perf_counter()
     counts = loader.load(engine, ds, gt, detect.run(ds))
     print(f"loaded {sum(counts.values())} rows into {len(counts)} tables in {time.perf_counter() - started:.1f}s")
+    users = users_mod.seed_users(engine)
+    print("demo logins:", ", ".join(f"{u['email']} ({u['role']})" for u in users), "- password is DEMO_PASSWORD")
     return 0
 
 

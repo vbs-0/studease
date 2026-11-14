@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     smtp_user: str | None = None
     smtp_password: str | None = None
     mail_from: str | None = None
+    mail_test_to: str | None = None                  # if set, mail meant for synthetic example.edu users goes here
+    data_scale: str = "starter"                      # which reports/<scale> folder /quality reads
 
     @property
     def test_url(self) -> str:
