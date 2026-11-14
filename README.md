@@ -260,7 +260,7 @@ The same product as a native Android app, in [`mobile/`](mobile) (Flutter, Mater
 
 - **Install:** download `StudEase-arm64.apk` from the [Releases page](https://github.com/vbs-0/studease/releases), allow "install unknown apps", open it. The build is debug-signed (fine for sideloading, not for a store).
 - **Build it yourself:** `cd mobile && flutter pub get && flutter build apk --release` (needs Flutter 3.44 and the Android SDK). Point it elsewhere with `--dart-define=API_BASE=<your API url>/api/v1`.
-- **Robo test:** `mobile/robo/login.json` is a Firebase Test Lab Robo script that signs in as the demo learner (insert the demo password first).
+- **Firebase Test Lab (Robo):** upload the APK, then under Additional options set the test account credentials: username field `Email`, password field `Password`, with a demo account such as `learner@example.edu` and the demo password.
 
 ## CI/CD pipeline
 
